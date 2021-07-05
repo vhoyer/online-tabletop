@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "node": "^14.17.2",
     "vue": "^3.0.5"
   },
   "devDependencies": {
