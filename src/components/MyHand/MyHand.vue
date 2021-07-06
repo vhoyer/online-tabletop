@@ -67,6 +67,9 @@ export default {
   right: 0;
   transform: translateY(75%);
   overflow-x: scroll;
+  transition-timing-function: ease-out;
+  transition-property: transform;
+  transition-duration: .2s;
 }
 
 .my-hand--open {
@@ -80,6 +83,9 @@ export default {
 
 .my-hand__item {
   flex-shrink: 0;
+  transition-timing-function: ease-out;
+  transition-property: margin;
+  transition-duration: .2s;
 
   &:not(:first-child) {
     margin-left: calc(-1 * var(--card-width));
