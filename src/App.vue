@@ -14,6 +14,10 @@ export default {
 
 <style>
 :root {
+  --opacity-m: 30%;
+
+  --color-coal-500: #111;
+
   --space-m: 16px;
 
   --border-m: 1px solid darkgray;

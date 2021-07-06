@@ -1,21 +1,30 @@
 <template>
   <div
+    v-if="hand.isOpen"
+    class="my-hand__backdrop"
+    @click="hand.isOpen = false"
+  />
+  <div
     class="my-hand"
+    :class="{
+      'my-hand--open': hand.isOpen,
+    }"
     tabindex="0"
+    @click="hand.isOpen = true"
   >
     <Card
       v-for="data in cardDataList"
       :key="JSON.stringify(data)"
-      class="my-hand__item"
-      tabindex="0"
       :type="cardType"
       :data="data"
+      class="my-hand__item"
     />
   </div>
 </template>
 
 <script>
 import Card from '@components/Card';
+import { reactive } from 'vue';
 
 export default {
   name: 'MyHand',
@@ -23,7 +32,10 @@ export default {
     Card,
   },
   setup() {
+    const hand = reactive({ isOpen: false });
+
     return {
+      hand,
       cardType: {
         template: `
           <div style="">{default}</div>
@@ -40,7 +52,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .my-hand {
   z-index: 0;
   display: flex;
@@ -54,28 +66,30 @@ export default {
   left: 0;
   right: 0;
   transform: translateY(75%);
-  transition: transform .3s ease-in;
+  overflow-x: scroll;
 }
 
-.my-hand:focus,
-.my-hand:focus-within {
+.my-hand--open {
   transform: translateY(0%);
+  justify-content: flex-start;
+
+  & > .my-hand__item.my-hand__item {
+    margin-left: 0;
+  }
 }
 
 .my-hand__item {
   flex-shrink: 0;
-  transition-duration: .2s;
-  transition-timing-function: ease-in;
-  transition-property: transform, box-shadow;
+
+  &:not(:first-child) {
+    margin-left: calc(-1 * var(--card-width));
+  }
 }
 
-.my-hand__item:not(:first-child) {
-  margin-left: calc(-1 * var(--card-width));
-}
-
-.my-hand__item:hover {
-  z-index: 1;
-  transform: translateY(-10%);
-  box-shadow: 0 0 0 5px black;
+.my-hand__backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-coal-500);
+  opacity: var(--opacity-m);
 }
 </style>
