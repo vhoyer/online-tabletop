@@ -4,9 +4,10 @@
     tabindex="0"
   >
     <Card
+      v-for="data in cardDataList"
+      :key="JSON.stringify(data)"
       class="my-hand__item"
       tabindex="0"
-      v-for="data in cardDataList"
       :type="cardType"
       :data="data"
     />
