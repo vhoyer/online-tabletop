@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "config": {
+    "topicList": {
+      "type": "Array",
+      "default": [
+        "creature you would transform into",
+        "cute things"
+      ]
+    }
+  },
+  "create": [
+    "define card NumberCard @1",
+    {
+      "template": [
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>{default}</div>",
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>{default}</div>",
+        "<div style='font-size:8rem; font-weight:bold'>{default}</div>"
+      ]
+    },
+
+    "define card TopicCard @1",
+    {
+      "template": ["<div style='font-size:2rem;'>{default}</div>"]
+    },
+
+    "define deck TopicDeck",
+    "for_in $topic $topicList @1",
+    [
+      "add_to_deck TopicDeck TopicCard @1",
+      {
+        "default": "$topic"
+      }
+    ],
+
+    "define deck NumberDeck",
+    "for_in $number 1..100 @1",
+    [
+      "add_to_deck NumberDeck NumberCard @1",
+      {
+        "default": "$number"
+      }
+    ],
+
+    "define pile TablePile",
+    ""
+  ],
+  "setup": [
+    "shuffle NumberDeck",
+    "shuffle TopicDeck",
+    ""
+  ]
+}
