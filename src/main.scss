@@ -1,0 +1,28 @@
+:root {
+  --opacity-m: 30%;
+
+  --color-coal-500: #111;
+
+  --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 32px;
+
+  --border-m: 1px solid darkgray;
+
+  --border-radius-m: 10px;
+
+  --card-border-radius: var(--border-radius-m);
+  --card-border: var(--border-m);
+  --card-width: 250px;
+  --card-height: calc(var(--card-width) * 1.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  color: #2c3e50;
+}
