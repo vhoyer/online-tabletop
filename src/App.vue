@@ -1,13 +1,5 @@
 <template>
-  <MyHand />
+  <h1>Online Tabletop</h1>
+
+  <router-view />
 </template>
-
-<script>
-import MyHand from '@components/MyHand'
-
-export default {
-  components: {
-    MyHand,
-  }
-}
-</script>
