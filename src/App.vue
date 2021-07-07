@@ -19,6 +19,8 @@ export default {
   --color-coal-500: #111;
 
   --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 32px;
 
   --border-m: 1px solid darkgray;
 

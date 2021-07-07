@@ -34,11 +34,16 @@ export default {
   setup() {
     const hand = reactive({ isOpen: false });
 
+    const html = (...args) => args.join('');
+
     return {
       hand,
       cardType: {
-        template: `
-          <div style="">{default}</div>
+        template: html`
+          <div style="font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;">{default}</div>
+          <div style="font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)">{default}</div>
+
+          <div style="font-size:8rem; font-weight:bold">{default}</div>
         `,
       },
       cardDataList: [
@@ -46,6 +51,12 @@ export default {
         { default: `2` },
         { default: `3` },
         { default: `4` },
+        { default: `5` },
+        { default: `6` },
+        { default: `7` },
+        { default: `8` },
+        { default: `9` },
+        { default: `10` },
       ],
     };
   },
@@ -56,11 +67,11 @@ export default {
 .my-hand {
   z-index: 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   padding-left: var(--space-m);
   padding-right: var(--space-m);
   padding-bottom: var(--space-m);
-  gap: var(--space-m);
+  gap: var(--space-xl);
   position: fixed;
   bottom: 0;
   left: 0;
@@ -68,11 +79,12 @@ export default {
   transform: translateY(75%);
   overflow-x: scroll;
   transition-timing-function: ease-out;
-  transition-property: transform;
+  transition-property: transform, gap;
   transition-duration: .2s;
 }
 
 .my-hand--open {
+  gap: var(--space-m);
   transform: translateY(0%);
   justify-content: flex-start;
 

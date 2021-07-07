@@ -7,7 +7,7 @@ export const cardType = ({
     get(target, key) {
       const addons = {
         render(data) {
-          return template.replace(/\{\w+\}/, (match) => {
+          return template.replace(/\{\w+\}/g, (match) => {
             return data[match.substr(1, match.length - 2)];
           })
         },

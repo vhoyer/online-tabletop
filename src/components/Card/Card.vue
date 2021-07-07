@@ -32,6 +32,7 @@ export default {
 
 <style>
 .card {
+  position: relative;
   border-radius: var(--card-border-radius);
   border: var(--card-border);
   width: var(--card-width);
@@ -39,5 +40,8 @@ export default {
   contain: strict;
   text-align: center;
   background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
