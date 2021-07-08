@@ -1,7 +1,7 @@
 <template>
-  <button>
+  <router-link :to="{ name: 'room' }">
     Create room
-  </button>
+  </router-link>
 </template>
 
 <script>
