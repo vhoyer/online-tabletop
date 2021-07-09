@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "exit 1",
+    "test": "jest",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
@@ -23,8 +23,11 @@
     "vue-router": "^4.0.10"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
     "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.0.5",
+    "babel-jest": "^27.0.6",
     "eslint": "^7.30.0",
     "eslint-plugin-vue": "^7.13.0",
     "sass": "^1.35.1",
