@@ -30,6 +30,7 @@
     "eslint": "^7.30.0",
     "eslint-plugin-vue": "^7.13.0",
     "jest": "^27.0.6",
+    "jest-jasmine2": "^27.0.6",
     "sass": "^1.35.1",
     "vite": "^2.3.8",
     "vite-aliases": "^0.8.2"
