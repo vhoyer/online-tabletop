@@ -1,13 +1,27 @@
 import { Room } from '@models/Room'
 
+const utils = {
+  addUser: expect.any(Function),
+  toDatabase: expect.any(Function),
+}
+
 describe('Models > Room', () => {
   def('subject', () => new Room($.base))
 
   it('initiates as a empty room', () => {
     expect($.subject).toEqual({
-      addUser: expect.any(Function),
+      ...utils,
       users: {},
       game: null,
+    })
+  })
+
+  describe('when call toDatabase', () => {
+    it('removes all functions', () => {
+      expect($.subject.toDatabase()).toEqual({
+        users: {},
+        game: null,
+      })
     })
   })
 
@@ -26,7 +40,7 @@ describe('Models > Room', () => {
 
     it('add first user as host', () => {
       expect($.subject).toEqual({
-        addUser: expect.any(Function),
+        ...utils,
         users: {
           'o_mago': {
             createdAt: expect.any(Date),
@@ -44,7 +58,7 @@ describe('Models > Room', () => {
 
       it('Add new user as spectator', () => {
         expect($.subject).toEqual({
-          addUser: expect.any(Function),
+          ...utils,
           users: {
             'o_mago': {
               createdAt: expect.any(Date),

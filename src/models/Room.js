@@ -17,4 +17,11 @@ export function Room(props = {}) {
       createdAt: new Date(),
     }
   }
+
+  this.toDatabase = () => {
+    return Object.fromEntries(
+      Object.entries(this)
+        .filter(([, value]) => typeof value !== 'function'),
+    )
+  }
 }
