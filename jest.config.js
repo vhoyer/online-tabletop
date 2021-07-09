@@ -84,7 +84,14 @@ module.exports = {
   ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  moduleNameMapper: require('./jsconfig.json').compilerOptions.paths,
+  // It's mapped to jsconfig so we only need to edit this in one place
+  moduleNameMapper: Object.fromEntries(
+    Object.entries(require('./jsconfig.json').compilerOptions.paths)
+      .map(([key, value]) => [
+        key.replace(/\*/, '(.*)'),
+        `<rootDir>/${value[0].replace(/\*/, '$1')}`,
+      ]),
+  ),
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
