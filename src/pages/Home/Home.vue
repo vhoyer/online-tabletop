@@ -15,15 +15,18 @@
 <script>
 import { ref } from 'vue'
 import { Room } from '@models/Room'
+import { createRoom } from '@services/rooms'
 
 export default {
   name: 'Home',
   setup() {
     const username = ref('')
 
-    const goToRoom = () => {
+    const goToRoom = async () => {
       const room = new Room()
       room.addUser(username.value)
+
+      console.log(await createRoom(room))
     }
 
     return {
