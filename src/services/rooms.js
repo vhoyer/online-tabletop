@@ -17,6 +17,6 @@ const database = firebase.database()
 /**
  * @param {Room} room from @models/Room
  */
-export function createRoom(room) {
+export function roomCreate(room) {
   return database.ref('rooms').push(room.toDatabase())
 }
