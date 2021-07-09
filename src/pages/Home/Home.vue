@@ -1,5 +1,5 @@
 <template>
-  <form @submit="goToRoom">
+  <form @submit.prevent="goToRoom">
     <input
       v-model="username"
       required

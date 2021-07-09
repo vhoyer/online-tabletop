@@ -14,14 +14,11 @@ export function Room(props = {}) {
 
     this.users[username] = {
       type,
-      createdAt: new Date(),
+      enteredAt: new Date(),
     }
   }
 
   this.toDatabase = () => {
-    return Object.fromEntries(
-      Object.entries(this)
-        .filter(([, value]) => typeof value !== 'function'),
-    )
+    return JSON.parse(JSON.stringify(this))
   }
 }

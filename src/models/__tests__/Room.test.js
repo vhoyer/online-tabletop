@@ -43,7 +43,7 @@ describe('Models > Room', () => {
         ...utils,
         users: {
           'o_mago': {
-            createdAt: expect.any(Date),
+            enteredAt: expect.any(Date),
             type: 'host',
           },
         },
@@ -61,15 +61,35 @@ describe('Models > Room', () => {
           ...utils,
           users: {
             'o_mago': {
-              createdAt: expect.any(Date),
+              enteredAt: expect.any(Date),
               type: 'host',
             },
             'bolinha_gamer': {
-              createdAt: expect.any(Date),
+              enteredAt: expect.any(Date),
               type: 'spectator',
             },
           },
           game: null,
+        })
+      })
+
+      describe('when call toDatabase', () => {
+        const regexTimestamp = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+
+        it('serializes the user correctly', () => {
+          expect($.subject.toDatabase()).toEqual({
+            users: {
+              'o_mago': {
+                enteredAt: expect.stringMatching(regexTimestamp),
+                type: 'host',
+              },
+              'bolinha_gamer': {
+                enteredAt: expect.stringMatching(regexTimestamp),
+                type: 'spectator',
+              },
+            },
+            game: null,
+          })
         })
       })
     })
