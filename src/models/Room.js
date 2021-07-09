@@ -7,6 +7,7 @@ export function Room(props = {}) {
 	}, props))
 
 	this.addUser = (username) => {
+		if (!username) throw new Error("User can't have empty username")
 		if (this.users[username]) throw new Error('User already exists in the room')
 
 		const type = Object.keys(this.users).length > 0 ? 'spectator' : 'host'

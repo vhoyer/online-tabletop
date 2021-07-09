@@ -11,6 +11,14 @@ describe('Models > Room', () => {
 		})
 	})
 
+	describe('when call addUser with "" (Empty string)', () => {
+		it('initiates as a empty room', () => {
+			expect(() => {
+				$.subject.addUser('')
+			}).toThrow(new Error("User can't have empty username"))
+		})
+	})
+
 	describe('when call addUser with "o_mago"', () => {
 		beforeEach(() => {
 			$.subject.addUser('o_mago')
