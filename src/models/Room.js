@@ -6,6 +6,15 @@ export function Room(props = {}) {
     game: null,
   }, props))
 
+  // spawn enteredAt as Date if they are serialized
+  this.users = Object.fromEntries(
+    Object.entries(this.users)
+      .map(([key, data]) => [key, {
+        ...data,
+        enteredAt: new Date(data.enteredAt),
+      }]),
+  )
+
   this.userAdd = (username) => {
     if (!username) throw new Error("User can't have empty username")
     if (this.users[username]) throw new Error('User already exists in the room')

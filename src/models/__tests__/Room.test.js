@@ -76,8 +76,10 @@ describe('Models > Room', () => {
       describe('when call toPlainObject', () => {
         const regexTimestamp = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
 
+        def('plainObject', () => $.subject.toPlainObject())
+
         it('serializes the user correctly', () => {
-          expect($.subject.toPlainObject()).toEqual({
+          expect($.plainObject).toEqual({
             users: {
               'o_mago': {
                 enteredAt: expect.stringMatching(regexTimestamp),
@@ -89,6 +91,25 @@ describe('Models > Room', () => {
               },
             },
             game: null,
+          })
+        })
+
+        describe('when creating another Room from plain object', () => {
+          it('creates Date objects for "enteredAt"', () => {
+            expect(new Room($.plainObject)).toEqual({
+              ...utils,
+              users: {
+                'o_mago': {
+                  enteredAt: expect.any(Date),
+                  type: 'host',
+                },
+                'bolinha_gamer': {
+                  enteredAt: expect.any(Date),
+                  type: 'spectator',
+                },
+              },
+              game: null,
+            })
           })
         })
       })
