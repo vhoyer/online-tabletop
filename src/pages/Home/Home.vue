@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="goToRoom">
     <input
-      v-model="username"
+      v-model="user.name"
       required
       type="text"
     >
@@ -13,21 +13,19 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import { Room } from '@models/Room'
 import { roomCreate } from '@services/rooms'
 import { useRouter } from 'vue-router'
+import { user } from '@store/user'
 
 export default {
   name: 'Home',
   setup() {
     const router = useRouter()
 
-    const username = ref('')
-
     const goToRoom = async () => {
       const room = new Room()
-      room.addUser(username.value)
+      room.addUser(user.name)
 
       const { key } = await roomCreate(room)
 
@@ -38,7 +36,7 @@ export default {
     }
 
     return {
-      username,
+      user,
       goToRoom,
     }
   },

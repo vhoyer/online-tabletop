@@ -9,7 +9,8 @@
       "@components/*": ["src/components/*"],
       "@models/*": ["src/models/*"],
       "@pages/*": ["src/pages/*"],
-      "@services/*": ["src/services/*"]
+      "@services/*": ["src/services/*"],
+      "@user/*": ["src/user/*"]
     }
   }
 }

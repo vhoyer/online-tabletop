@@ -33,6 +33,7 @@ import { onUnmounted, ref, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
 import { Room } from '@models/Room'
+import { user } from '@store/user'
 
 export default {
   name: 'Room',
@@ -41,7 +42,7 @@ export default {
 
     const room = reactive({})
     const isLoading = ref(true)
-    const unsubscribe = roomSubscribe(key, (data) => {
+    const unsubscribe = roomSubscribe(key, user.name, (data) => {
       Object.assign(room, new Room(data))
 
       isLoading.value = false

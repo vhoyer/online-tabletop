@@ -21,19 +21,42 @@ export function roomCreate(room) {
   return database.ref('rooms').push(room.toDatabase())
 }
 
-export function roomSubscribe(id, callback) {
-  const room = database.ref(`rooms/${id}`)
+export function roomSubscribe(id, currentUser, callback) {
+  const roomRef = database.ref(`rooms/${id}`)
+
+  let disconnectInstruction = null
 
   const onValueChange = (snapshot) => {
     if (!snapshot.exists()) throw new Error('room inexistent')
 
-    callback(snapshot.val())
+    disconnectInstruction?.cancel()
+
+    const room = snapshot.val()
+
+    if (Object.keys(room.users).length > 1) {
+      disconnectInstruction = snapshot.child('users').ref.onDisconnect()
+      const myself = room.users[currentUser]
+
+      const usersWithoutMe = Object.entries(room.users).filter(([name]) => name !== currentUser)
+
+      if (myself.type === 'host') {
+        usersWithoutMe.sort((a, b) => new Date(a.enteredAt) - new Date(b.enteredAt))
+        usersWithoutMe[0].type = 'host'
+      }
+
+      disconnectInstruction.set(Object.fromEntries(usersWithoutMe))
+    } else {
+      disconnectInstruction = snapshot.ref.onDisconnect()
+      disconnectInstruction.remove()
+    }
+
+    callback(room)
   }
 
-  room.on('value', onValueChange)
+  roomRef.on('value', onValueChange)
 
   const unsubscribe = () => {
-    room.off('value', onValueChange)
+    roomRef.off('value', onValueChange)
   }
 
   return unsubscribe
