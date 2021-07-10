@@ -1,8 +1,10 @@
 import { Room } from '@models/Room'
 
 const utils = {
+  userRemove: expect.any(Function),
   userAdd: expect.any(Function),
   toPlainObject: expect.any(Function),
+  copy: expect.any(Function),
 }
 
 describe('Models > Room', () => {
@@ -70,6 +72,43 @@ describe('Models > Room', () => {
             },
           },
           game: null,
+        })
+      })
+
+      describe('when call userRemove("o_mago")', () => {
+        beforeEach(() => {
+          $.subject.userRemove('o_mago')
+        })
+
+        it('appoints the oldest user the new host', () => {
+          expect($.subject.users).toEqual({
+            'bolinha_gamer': {
+              enteredAt: expect.any(Date),
+              type: 'host',
+            },
+          })
+        })
+      })
+
+      describe('when call userRemove("bolinha_gamer")', () => {
+        beforeEach(() => {
+          $.subject.userRemove('bolinha_gamer')
+        })
+
+        it('removes the user', () => {
+          expect($.subject.users).toEqual({
+            'o_mago': {
+              enteredAt: expect.any(Date),
+              type: 'host',
+            },
+          })
+        })
+      })
+
+      describe('when call copy', () => {
+        it('creates a copy of the current Room', () => {
+          expect($.subject).toBe($.subject)
+          expect($.subject.copy()).not.toBe($.subject)
         })
       })
 

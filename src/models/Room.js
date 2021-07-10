@@ -29,6 +29,26 @@ export function Room(props = {}) {
       type,
       enteredAt: new Date(),
     }
+
+    return this
+  }
+
+  this.userRemove = (username) => {
+    const { [username]: toBeRemoved, ...users } = this.users
+
+    if (toBeRemoved.type === 'host') {
+      const oldestToNewest = (a, b) => a.enteredAt - b.enteredAt
+      const [oldestUser] = Object.entries(users).sort(oldestToNewest)[0]
+      users[oldestUser].type = 'host'
+    }
+
+    Object.assign(this, { users })
+
+    return this
+  }
+
+  this.copy = () => {
+    return new Room(this.toPlainObject())
   }
 
   this.toPlainObject = () => {

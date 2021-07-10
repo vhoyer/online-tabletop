@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/database'
+import { Room } from '@models/Room'
 
 firebase.initializeApp({
   apiKey: 'AIzaSyDAjRc0ycZ3RPfjKlYiAyyEP8GkB0fPuco',
@@ -31,20 +32,12 @@ export function roomSubscribe(id, currentUser, callback) {
 
     disconnectInstruction?.cancel()
 
-    const room = snapshot.val()
+    const room = new Room(snapshot.val())
 
     if (Object.keys(room.users).length > 1) {
       disconnectInstruction = snapshot.child('users').ref.onDisconnect()
-      const myself = room.users[currentUser]
-
-      const usersWithoutMe = Object.entries(room.users).filter(([name]) => name !== currentUser)
-
-      if (myself.type === 'host') {
-        usersWithoutMe.sort((a, b) => new Date(a.enteredAt) - new Date(b.enteredAt))
-        usersWithoutMe[0].type = 'host'
-      }
-
-      disconnectInstruction.set(Object.fromEntries(usersWithoutMe))
+      const newRoom = room.copy().userRemove(currentUser)
+      disconnectInstruction.set(newRoom)
     } else {
       disconnectInstruction = snapshot.ref.onDisconnect()
       disconnectInstruction.remove()
