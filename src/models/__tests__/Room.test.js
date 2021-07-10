@@ -56,7 +56,7 @@ describe('Models > Room', () => {
         $.subject.userAdd('bolinha_gamer')
       })
 
-      it('Add new user as spectator', () => {
+      it('Add new user as player', () => {
         expect($.subject).toEqual({
           ...utils,
           users: {
@@ -66,7 +66,7 @@ describe('Models > Room', () => {
             },
             'bolinha_gamer': {
               enteredAt: expect.any(Date),
-              type: 'spectator',
+              type: 'player',
             },
           },
           game: null,
@@ -87,7 +87,7 @@ describe('Models > Room', () => {
               },
               'bolinha_gamer': {
                 enteredAt: expect.stringMatching(regexTimestamp),
-                type: 'spectator',
+                type: 'player',
               },
             },
             game: null,
@@ -105,7 +105,7 @@ describe('Models > Room', () => {
                 },
                 'bolinha_gamer': {
                   enteredAt: expect.any(Date),
-                  type: 'spectator',
+                  type: 'player',
                 },
               },
               game: null,
