@@ -6,7 +6,7 @@ export function Room(props = {}) {
     game: null,
   }, props))
 
-  this.addUser = (username) => {
+  this.userAdd = (username) => {
     if (!username) throw new Error("User can't have empty username")
     if (this.users[username]) throw new Error('User already exists in the room')
 

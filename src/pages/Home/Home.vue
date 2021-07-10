@@ -25,7 +25,7 @@ export default {
 
     const goToRoom = async () => {
       const room = new Room()
-      room.addUser(user.name)
+      room.userAdd(user.name)
 
       const { key } = await roomCreate(room)
 

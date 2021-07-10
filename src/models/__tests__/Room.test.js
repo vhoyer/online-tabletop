@@ -1,7 +1,7 @@
 import { Room } from '@models/Room'
 
 const utils = {
-  addUser: expect.any(Function),
+  userAdd: expect.any(Function),
   toPlainObject: expect.any(Function),
 }
 
@@ -25,17 +25,17 @@ describe('Models > Room', () => {
     })
   })
 
-  describe('when call addUser with "" (Empty string)', () => {
+  describe('when call userAdd with "" (Empty string)', () => {
     it('initiates as a empty room', () => {
       expect(() => {
-        $.subject.addUser('')
+        $.subject.userAdd('')
       }).toThrow(new Error("User can't have empty username"))
     })
   })
 
-  describe('when call addUser with "o_mago"', () => {
+  describe('when call userAdd with "o_mago"', () => {
     beforeEach(() => {
-      $.subject.addUser('o_mago')
+      $.subject.userAdd('o_mago')
     })
 
     it('add first user as host', () => {
@@ -51,9 +51,9 @@ describe('Models > Room', () => {
       })
     })
 
-    describe('when call addUser with "bolinha_gamer"', () => {
+    describe('when call userAdd with "bolinha_gamer"', () => {
       beforeEach(() => {
-        $.subject.addUser('bolinha_gamer')
+        $.subject.userAdd('bolinha_gamer')
       })
 
       it('Add new user as spectator', () => {
@@ -94,10 +94,10 @@ describe('Models > Room', () => {
       })
     })
 
-    describe('when call addUser with "o_mago"', () => {
+    describe('when call userAdd with "o_mago"', () => {
       it('initiates as a empty room', () => {
         expect(() => {
-          $.subject.addUser('o_mago')
+          $.subject.userAdd('o_mago')
         }).toThrow(new Error('User already exists in the room'))
       })
     })
