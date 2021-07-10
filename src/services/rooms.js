@@ -20,3 +20,21 @@ const database = firebase.database()
 export function roomCreate(room) {
   return database.ref('rooms').push(room.toDatabase())
 }
+
+export function roomSubscribe(id, callback) {
+  const room = database.ref(`rooms/${id}`)
+
+  const onValueChange = (snapshot) => {
+    if (!snapshot.exists()) throw new Error('room inexistent')
+
+    callback(snapshot.val())
+  }
+
+  room.on('value', onValueChange)
+
+  const unsubscribe = () => {
+    room.off('value', onValueChange)
+  }
+
+  return unsubscribe
+}

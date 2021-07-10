@@ -16,17 +16,25 @@
 import { ref } from 'vue'
 import { Room } from '@models/Room'
 import { roomCreate } from '@services/rooms'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'Home',
   setup() {
+    const router = useRouter()
+
     const username = ref('')
 
     const goToRoom = async () => {
       const room = new Room()
       room.addUser(username.value)
 
-      console.log(await roomCreate(room))
+      const { key } = await roomCreate(room)
+
+      router.push({
+        name: 'room',
+        params: { key },
+      })
     }
 
     return {

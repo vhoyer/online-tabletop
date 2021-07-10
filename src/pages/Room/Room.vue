@@ -3,50 +3,54 @@
     Home
   </router-link>
 
-  <section>
-    <h1>game info</h1>
+  <div v-if="isLoading">
+    loading...
+  </div>
+  <template v-else>
+    <section>
+      <h1>game info</h1>
 
-    <dl>
-      <dt>playing:</dt>
-      <dd>
-        notito
-        <button>change game</button>
-      </dd>
+      <button>choose a game</button>
+    </section>
 
-      <dt>config:</dt>
-      <dd>
-        <button>change config</button>
-        <div>
-          dummy config
-        </div>
-        <textarea disabled>Dolor sit sit molestiae sit cumque? Hic tempora vel nihil rerum quos Dolorem ducimus eveniet quibusdam at nesciunt, debitis Dolore ex eos voluptates beatae inventore incidunt dicta Dignissimos nesciunt enim</textarea>
-      </dd>
-    </dl>
+    <section>
+      <h1>players</h1>
 
-    <button>play</button>
-  </section>
-
-  <section>
-    <h1>players</h1>
-
-    <ul>
-      <li>dummy player</li>
-    </ul>
-  </section>
-
-  <section>
-    <h1>waiting/spectating</h1>
-
-    <ul>
-      <li>
-        dummy not-player <button>promote to player</button>
-      </li>
-    </ul>
-  </section>
+      <ul>
+        <li
+          v-for="({ type }, username) in room.users"
+          :key="username"
+        >
+          {{ username }} [{{ type }}]
+        </li>
+      </ul>
+    </section>
+  </template>
 </template>
 
 <script>
+import { onUnmounted, ref, reactive } from 'vue'
+import { useRoute } from 'vue-router'
+import { roomSubscribe } from '@services/rooms'
+
 export default {
   name: 'Room',
-};
+  setup() {
+    const { key } = useRoute().params
+
+    const room = reactive({})
+    const isLoading = ref(true)
+    const unsubscribe = roomSubscribe(key, (data) => {
+      Object.assign(room, data)
+
+      isLoading.value = false
+    })
+    onUnmounted(unsubscribe)
+
+    return {
+      isLoading,
+      room,
+    }
+  },
+}
 </script>

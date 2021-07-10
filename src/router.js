@@ -7,8 +7,8 @@ export const router = createRouter({
     name: 'home',
     component: () => import('@pages/Home'),
   }, {
-    path: '/room',
+    path: '/room/:key',
     name: 'room',
     component: () => import('@pages/Room'),
   }],
-});
+})
