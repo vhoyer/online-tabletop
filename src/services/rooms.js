@@ -18,7 +18,7 @@ const database = firebase.database()
  * @param {Room} room from @models/Room
  */
 export function roomCreate(room) {
-  return database.ref('rooms').push(room.toDatabase())
+  return database.ref('rooms').push(room.toPlainObject())
 }
 
 export function roomSubscribe(id, currentUser, callback) {

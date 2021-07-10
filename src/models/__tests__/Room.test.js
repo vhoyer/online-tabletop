@@ -2,7 +2,7 @@ import { Room } from '@models/Room'
 
 const utils = {
   addUser: expect.any(Function),
-  toDatabase: expect.any(Function),
+  toPlainObject: expect.any(Function),
 }
 
 describe('Models > Room', () => {
@@ -16,9 +16,9 @@ describe('Models > Room', () => {
     })
   })
 
-  describe('when call toDatabase', () => {
+  describe('when call toPlainObject', () => {
     it('removes all functions', () => {
-      expect($.subject.toDatabase()).toEqual({
+      expect($.subject.toPlainObject()).toEqual({
         users: {},
         game: null,
       })
@@ -73,11 +73,11 @@ describe('Models > Room', () => {
         })
       })
 
-      describe('when call toDatabase', () => {
+      describe('when call toPlainObject', () => {
         const regexTimestamp = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
 
         it('serializes the user correctly', () => {
-          expect($.subject.toDatabase()).toEqual({
+          expect($.subject.toPlainObject()).toEqual({
             users: {
               'o_mago': {
                 enteredAt: expect.stringMatching(regexTimestamp),

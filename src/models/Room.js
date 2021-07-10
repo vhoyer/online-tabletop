@@ -18,7 +18,7 @@ export function Room(props = {}) {
     }
   }
 
-  this.toDatabase = () => {
+  this.toPlainObject = () => {
     return JSON.parse(JSON.stringify(this))
   }
 }
