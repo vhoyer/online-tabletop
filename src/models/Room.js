@@ -15,6 +15,10 @@ export function Room(props = {}) {
       }]),
   )
 
+  //
+  // Public Methods
+  //
+
   this.userAdd = (username) => {
     if (!username) throw new Error("User can't have empty username")
     if (this.users[username]) throw new Error('User already exists in the room')
