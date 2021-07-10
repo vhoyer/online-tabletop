@@ -30,13 +30,14 @@
 
 <script>
 import { onUnmounted, ref, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
 import { user } from '@store/user'
 
 export default {
   name: 'Room',
   setup() {
+    const router = useRouter()
     const { key } = useRoute().params
 
     const room = reactive({})
@@ -45,6 +46,8 @@ export default {
       Object.assign(room, data)
 
       isLoading.value = false
+    }, () => {
+      router.push({ name: 'home' })
     })
     onUnmounted(unsubscribe)
 

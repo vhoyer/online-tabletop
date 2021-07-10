@@ -22,13 +22,13 @@ export function roomCreate(room) {
   return database.ref('rooms').push(room.toPlainObject())
 }
 
-export function roomSubscribe(id, currentUser, callback) {
+export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
   const roomRef = database.ref(`rooms/${id}`)
 
   let disconnectInstruction = null
 
   const onValueChange = (snapshot) => {
-    if (!snapshot.exists()) throw new Error('room inexistent')
+    if (!snapshot.exists()) return onError(new Error('room inexistent'))
 
     disconnectInstruction?.cancel()
 
