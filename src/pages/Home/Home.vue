@@ -1,29 +1,22 @@
 <template>
-  <form @submit.prevent="goToRoom">
-    <input
-      v-model="user.name"
-      required
-      type="text"
-    >
-
-    <button>
-      Start
-    </button>
-  </form>
+  <UserSetup @submit="goToRoom" />
 </template>
 
 <script>
 import { Room } from '@models/Room'
 import { roomCreate } from '@services/rooms'
 import { useRouter } from 'vue-router'
-import { user } from '@store/user'
+import UserSetup from '@components/UserSetup'
 
 export default {
   name: 'Home',
+  components: {
+    UserSetup,
+  },
   setup() {
     const router = useRouter()
 
-    const goToRoom = async () => {
+    const goToRoom = async (user) => {
       const room = new Room()
       room.userAdd(user.name)
 
@@ -36,7 +29,6 @@ export default {
     }
 
     return {
-      user,
       goToRoom,
     }
   },
