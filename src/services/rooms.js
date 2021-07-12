@@ -34,7 +34,6 @@ export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
     disconnectInstruction?.cancel()
 
     const roomRaw = snapshot.val()
-    console.log(roomRaw, currentUser)
     const room = new Room(roomRaw, {
       onUpdate(newValue, old) {
         observableDiff(old, newValue.toPlainObject(), diff => ({
