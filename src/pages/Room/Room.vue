@@ -6,6 +6,10 @@
   <div v-if="isLoading">
     loading...
   </div>
+  <UserSetup
+    v-else-if="!hasUser"
+    @submit="onUserCreate"
+  />
   <template v-else>
     <section>
       <h1>game info</h1>
@@ -29,31 +33,48 @@
 </template>
 
 <script>
-import { onUnmounted, ref, reactive } from 'vue'
+import { onUnmounted, ref, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
 import { user } from '@store/user'
+import UserSetup from '@components/UserSetup'
 
 export default {
   name: 'Room',
+  components: {
+    UserSetup,
+  },
   setup() {
     const router = useRouter()
     const { key } = useRoute().params
 
     const room = reactive({})
     const isLoading = ref(true)
-    const unsubscribe = roomSubscribe(key, user.name, (data) => {
-      Object.assign(room, data)
+    const unsubscribe = ref(null)
+    watch(() => user, (user) => {
+      unsubscribe.value?.()
 
-      isLoading.value = false
-    }, () => {
-      router.push({ name: 'home' })
-    })
-    onUnmounted(unsubscribe)
+      unsubscribe.value = roomSubscribe(key, user.name, (data) => {
+        Object.assign(room, data)
+
+        isLoading.value = false
+      }, () => {
+        router.push({ name: 'home' })
+      })
+    }, { deep: true, immediate: true })
+    onUnmounted(() => unsubscribe.value?.())
+
+    const hasUser = ref(Boolean(user.name))
+    const onUserCreate = () => {
+      hasUser.value = true
+      room.userAdd(user.name)
+    }
 
     return {
       isLoading,
       room,
+      hasUser,
+      onUserCreate,
     }
   },
 }
