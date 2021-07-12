@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/database'
 import { Room } from '@models/Room'
+import { observableDiff } from 'deep-diff'
 
 firebase.initializeApp({
   apiKey: 'AIzaSyDAjRc0ycZ3RPfjKlYiAyyEP8GkB0fPuco',
@@ -32,12 +33,21 @@ export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
 
     disconnectInstruction?.cancel()
 
-    const room = new Room(snapshot.val())
+    const roomRaw = snapshot.val()
+    console.log(roomRaw, currentUser)
+    const room = new Room(roomRaw, {
+      onUpdate(newValue, old) {
+        observableDiff(old, newValue.toPlainObject(), diff => ({
+          // indicates a newly added property/element
+          'N': () => snapshot.child(diff.path.join('/')).ref.set(diff.rhs),
+        })?.[diff.kind]())
+      },
+    })
 
     if (Object.keys(room.users).length > 1) {
       disconnectInstruction = snapshot.child('users').ref.onDisconnect()
       const newRoom = room.copy().userRemove(currentUser)
-      disconnectInstruction.set(newRoom)
+      disconnectInstruction.set(newRoom.toPlainObject().users)
     } else {
       disconnectInstruction = snapshot.ref.onDisconnect()
       disconnectInstruction.remove()
