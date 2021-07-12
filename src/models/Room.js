@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge'
 
-export function Room(props = {}) {
+export function Room(props = {}, { onUpdate } = {}) {
   Object.assign(this, deepmerge({
     users: {},
     game: null,
@@ -15,11 +15,27 @@ export function Room(props = {}) {
       }]),
   )
 
+  const onUpdateWrap = (fn) => {
+    if (!onUpdate) {
+      return (...args) => fn(...args)
+    }
+
+    return (...args) => {
+      const old = this.toPlainObject()
+
+      const returnValue = fn(...args)
+
+      onUpdate(this, old)
+
+      return returnValue
+    }
+  }
+
   //
   // Public Methods
   //
 
-  this.userAdd = (username) => {
+  this.userAdd = onUpdateWrap((username) => {
     if (!username) throw new Error("User can't have empty username")
     if (this.users[username]) throw new Error('User already exists in the room')
 
@@ -31,9 +47,9 @@ export function Room(props = {}) {
     }
 
     return this
-  }
+  })
 
-  this.userRemove = (username) => {
+  this.userRemove = onUpdateWrap((username) => {
     const { [username]: toBeRemoved, ...users } = this.users
 
     if (toBeRemoved.type === 'host') {
@@ -45,7 +61,7 @@ export function Room(props = {}) {
     Object.assign(this, { users })
 
     return this
-  }
+  })
 
   this.copy = () => {
     return new Room(this.toPlainObject())
