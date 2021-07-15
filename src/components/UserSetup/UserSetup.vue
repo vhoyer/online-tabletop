@@ -6,7 +6,7 @@
       type="text"
     >
 
-    <button>
+    <button @click="user.hasLoggedIn = true">
       Start
     </button>
   </form>

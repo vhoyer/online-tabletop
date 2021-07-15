@@ -7,7 +7,7 @@
     loading...
   </div>
   <UserSetup
-    v-else-if="!hasUser"
+    v-else-if="!user.hasLoggedIn"
     @submit="onUserCreate"
   />
   <template v-else>
@@ -64,16 +64,14 @@ export default {
     }, { deep: true, immediate: true })
     onUnmounted(() => unsubscribe.value?.())
 
-    const hasUser = ref(Boolean(user.name))
     const onUserCreate = () => {
-      hasUser.value = true
       room.userAdd(user.name)
     }
 
     return {
       isLoading,
       room,
-      hasUser,
+      user,
       onUserCreate,
     }
   },
