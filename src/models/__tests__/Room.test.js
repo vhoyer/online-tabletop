@@ -18,6 +18,39 @@ describe('Models > Room', () => {
     })
   })
 
+  describe('when passing a onUpdate listener as second argument', () => {
+    def('events', () => ({
+      onUpdate: jest.fn(),
+    }))
+
+    def('subject', () => new Room($.base, $.events))
+
+    describe('when calls userAdd', () => {
+      let old
+
+      beforeEach(() => {
+        old = $.subject.toPlainObject()
+
+        $.subject.userAdd('o_mago')
+      })
+
+      it('calls onUpdate event', () => {
+        expect($.events.onUpdate).toHaveBeenCalledTimes(1)
+        expect($.events.onUpdate).toHaveBeenNthCalledWith(1, $.subject, old)
+      })
+    })
+
+    describe('when calls copy', () => {
+      beforeEach(() => {
+        $.subject.copy()
+      })
+
+      it('doesn\'t call onUpdate event', () => {
+        expect($.events.onUpdate).toHaveBeenCalledTimes(0)
+      })
+    })
+  })
+
   describe('when call toPlainObject', () => {
     it('removes all functions', () => {
       expect($.subject.toPlainObject()).toEqual({
