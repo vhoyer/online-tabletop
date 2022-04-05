@@ -12,13 +12,13 @@
   />
   <template v-else>
     <section>
-      <h1>game info</h1>
+      <h2>game info</h2>
 
       <button>choose a game</button>
     </section>
 
     <section>
-      <h1>players</h1>
+      <h2>players</h2>
 
       <ul>
         <li
