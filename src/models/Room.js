@@ -63,6 +63,12 @@ export function Room(props = {}, { onUpdate } = {}) {
     return this
   })
 
+  this.setGame = onUpdateWrap((game) => {
+    Object.assign(this, { game })
+
+    return this
+  })
+
   this.copy = () => {
     return new Room(this.toPlainObject())
   }

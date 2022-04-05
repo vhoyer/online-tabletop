@@ -14,7 +14,11 @@
     <section>
       <h2>game info</h2>
 
-      <button>choose a game</button>
+      <div>
+        Selected game: {{ room.game?.name ?? 'None' }}
+      </div>
+
+      <input type="file" @change="onGameChange" accept="application/json">
     </section>
 
     <section>
@@ -36,6 +40,7 @@
 import { onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
+import { Game } from '@models/Game'
 import { user } from '@store/user'
 import UserSetup from '@components/UserSetup'
 
@@ -68,11 +73,38 @@ export default {
       room.value.userAdd(user.name)
     }
 
+    const onGameChange = (event) => {
+      const { target: { files } } = event;
+
+      if (files.length === 0) {
+        room.value.setGame(null)
+        console.error('[APP] No file selected', files, event);
+        return
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = ({ target: { result: fileContent } }) => {
+        try {
+          const gameRaw = JSON.parse(fileContent)
+          console.info('[APP] file read, add game to room', gameRaw)
+
+          room.value.setGame(new Game(gameRaw))
+        } catch (error) {
+          console.error('[APP] error parsing game file:', error)
+        }
+      }
+
+      console.info('[APP] begin reading files[0]', reader)
+      reader.readAsText(files[0])
+    }
+
     return {
       isLoading,
       room,
       user,
       onUserCreate,
+      onGameChange,
     }
   },
 }

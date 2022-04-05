@@ -23,9 +23,21 @@ export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
     const room = new Room(roomRaw, {
       onUpdate(newValue, old) {
         observableDiff(old, newValue.toPlainObject(), diff => ({
-          // indicates a newly added property/element
-          'N': () => snapshot.child(diff.path.join('/')).ref.set(diff.rhs),
-        })?.[diff.kind]())
+          'N': () => { // indicates a newly added property/element
+            const key = diff.path.join('/');
+
+            console.info(`[APP][database] New "${key}", set:`, diff.rhs)
+            snapshot.child(key).ref.set(diff.rhs)
+          },
+          'E': () => { // indicates a property/element was edited
+            const key = diff.path.join('/');
+
+            console.info(`[APP][database] Edit "${key}", set:`, diff.rhs)
+            snapshot.child(key).ref.set(diff.rhs)
+          },
+          // 'D': () => {}, // indicates a property/element was deleted
+          // 'A': () => {}, // indicates a change occurred within an array
+        })[diff.kind]?.())
       },
     })
 
