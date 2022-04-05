@@ -1,0 +1,18 @@
+version: "3.5"
+
+services:
+  online-tabletop:
+    tty: true
+    stdin_open: true
+    # env_file: envs/global-secret.env
+    image: node:14
+    working_dir: /app
+    command: make startup
+    ports:
+      - 3123:3123
+    volumes:
+      - ./:/app
+      - online-tabletop-node-modules:/app/node_modules
+
+volumes:
+  online-tabletop-node-modules:
