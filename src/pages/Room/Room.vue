@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { onUnmounted, ref, reactive, watch } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
 import { user } from '@store/user'
@@ -48,14 +48,14 @@ export default {
     const router = useRouter()
     const { key } = useRoute().params
 
-    const room = reactive({})
+    const room = ref(null)
     const isLoading = ref(true)
     const unsubscribe = ref(null)
     watch(() => user, (user) => {
       unsubscribe.value?.()
 
       unsubscribe.value = roomSubscribe(key, user.name, (data) => {
-        Object.assign(room, data)
+        room.value = data
 
         isLoading.value = false
       }, () => {
@@ -65,7 +65,7 @@ export default {
     onUnmounted(() => unsubscribe.value?.())
 
     const onUserCreate = () => {
-      room.userAdd(user.name)
+      room.value.userAdd(user.name)
     }
 
     return {
