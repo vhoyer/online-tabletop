@@ -18,6 +18,14 @@
         Selected game: {{ room.game?.name ?? 'None' }}
       </div>
 
+      <fieldset v-if="Boolean(room.game)">
+        <template :key="name" v-for="(options, name) in room.game.config">
+          <label :for="name">{{ name }}</label>
+          <br>
+          <textarea :id="name" cols="30" rows="10" v-model="options.editableValue" />
+        </template>
+      </fieldset>
+
       <input type="file" @change="onGameChange" accept="application/json">
     </section>
 
@@ -37,7 +45,7 @@
 </template>
 
 <script>
-import { onUnmounted, ref, watch } from 'vue'
+import { onUnmounted, ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
 import { Game } from '@models/Game'
