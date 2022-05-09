@@ -1,3 +1,4 @@
+import { onUpdateWrapRaw } from './_base'
 import deepmerge from 'deepmerge'
 import { mapValues } from '@utils/object'
 import { Game } from '@models/Game'
@@ -23,21 +24,7 @@ export function Room(props = {}, { onUpdate } = {}) {
   // Private methods
   //
 
-  const onUpdateWrap = (fn) => {
-    if (!onUpdate) {
-      return (...args) => fn(...args)
-    }
-
-    return (...args) => {
-      const old = this.toPlainObject()
-
-      const returnValue = fn(...args)
-
-      onUpdate(this, old)
-
-      return returnValue
-    }
-  }
+  const onUpdateWrap = onUpdateWrapRaw.bind(this, { onUpdate })
 
   //
   // Public Methods
