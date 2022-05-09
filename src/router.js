@@ -10,5 +10,9 @@ export const router = createRouter({
     path: '/room/:key',
     name: 'room',
     component: () => import('@pages/Room'),
+  }, {
+    path: '/room/:key/table',
+    name: 'table',
+    component: () => import('@pages/Room/Table'),
   }],
 })

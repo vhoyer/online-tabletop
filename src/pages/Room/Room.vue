@@ -27,6 +27,15 @@
       </fieldset>
 
       <input type="file" @change="onGameChange" accept="application/json">
+
+      <br>
+
+      <router-link
+        v-if="Boolean(room.game)"
+        :to="{ name: 'table', params: $route.params }"
+      >
+        Play {{ room.game.name  }}
+      </router-link>
     </section>
 
     <section>
