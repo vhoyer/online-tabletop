@@ -1,4 +1,3 @@
-import { onUpdateWrapRaw } from './_base'
 import deepmerge from 'deepmerge'
 import { mapValues } from '@utils/object'
 import { Game } from '@models/Game'
@@ -12,19 +11,53 @@ export function Room(props = {}, { onUpdate } = {}) {
   //
   // recreate state from serialized props
   //
-  this.users = mapValues(this.users, data => ({
-    ...data,
-    enteredAt: new Date(data.enteredAt)
-  }))
-  if (this.game) {
-    this.game = new Game(this.game)
+  const recreateState = () => {
+    this.users = mapValues(this.users, data => ({
+      ...data,
+      enteredAt: new Date(data.enteredAt)
+    }))
+
+    const childModels = [
+      ['game', Game],
+    ]
+
+    childModels.forEach(([child, Klass]) => {
+      if (!this[child]) return
+      if (this[child] instanceof Klass) return
+
+      this[child] = new Klass(this[child], {
+        onUpdate: (_current, oldChild) => {
+          const old = this.toPlainObject()
+          old[child] = oldChild;
+
+          onUpdate(this, old);
+        },
+      })
+    })
   }
+  recreateState()
 
   //
   // Private methods
   //
 
-  const onUpdateWrap = onUpdateWrapRaw.bind(this, { onUpdate })
+  const onUpdateWrap = (fn) => {
+    const fnWith = (extra, ...args) => {
+      const returnValue = fn(...args)
+      extra()
+      return returnValue
+    }
+
+    if (!onUpdate) {
+      return (...args) => fnWith(recreateState, ...args)
+    }
+
+    return (...args) => {
+      const old = this.toPlainObject()
+
+      return fnWith(() => onUpdate(this, old), ...args)
+    }
+  }
 
   //
   // Public Methods
@@ -54,13 +87,11 @@ export function Room(props = {}, { onUpdate } = {}) {
     }
 
     Object.assign(this, { users })
-
     return this
   })
 
   this.gameSet = onUpdateWrap((game) => {
     Object.assign(this, { game })
-
     return this
   })
 

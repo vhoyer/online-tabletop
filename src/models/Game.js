@@ -1,13 +1,12 @@
 import deepmerge from 'deepmerge'
+import { mapValues } from '@utils/object'
 
-const configProxy = (obj) => new Proxy(obj, {
+const configProxy = (obj, callback) => new Proxy(obj, {
   get(target, key, _proxy) {
     const custom = {
       value: () => target[key] ?? target.default,
       editableValue: () => target[key] ?? target.default.join('\n'),
     }
-
-    console.warn('[debug][proxy][get]', {target, key, _proxy})
 
     return custom[key]?.() ?? target[key]
   },
@@ -20,10 +19,12 @@ const configProxy = (obj) => new Proxy(obj, {
     }
 
     custom[key]?.() ?? (target[key] = value)
+    callback()
+    return true
   },
 })
 
-export function Game(props = {}) {
+export function Game(props = {}, { onUpdate } = {}) {
   Object.assign(this, deepmerge({
     version: 1,
     name: null,
@@ -32,10 +33,23 @@ export function Game(props = {}) {
     setup: [],
   }, props))
 
-  this.config = Object.fromEntries(
-    Object.entries(this.config)
-      .map(([key, value]) => [key, configProxy(value)]),
-  )
+  let old;
+  const updateNotifier = () => {
+    onUpdate(this, old)
+    old = this.toPlainObject();
+  }
+
+  this.config = mapValues(this.config, value => configProxy(value, updateNotifier))
 
   console.log('[debug][game]', this)
+
+  this.copy = () => {
+    return new Game(this.toPlainObject())
+  }
+
+  this.toPlainObject = () => {
+    return JSON.parse(JSON.stringify(this))
+  }
+
+  old = this.toPlainObject();
 }
