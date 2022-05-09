@@ -22,7 +22,7 @@
         <template :key="name" v-for="(options, name) in room.game.config">
           <label :for="name">{{ name }}</label>
           <br>
-          <textarea :id="name" cols="30" rows="10" v-model="options.editableValue" />
+          <textarea :id="name" cols="100" rows="10" v-model="options.editableValue" />
         </template>
       </fieldset>
 
