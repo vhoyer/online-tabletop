@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge'
+import { mapValues } from '@utils/object'
 
 export function Room(props = {}, { onUpdate } = {}) {
   Object.assign(this, deepmerge({
@@ -6,14 +7,13 @@ export function Room(props = {}, { onUpdate } = {}) {
     game: null,
   }, props))
 
-  // spawn enteredAt as Date if they are serialized
-  this.users = Object.fromEntries(
-    Object.entries(this.users)
-      .map(([key, data]) => [key, {
-        ...data,
-        enteredAt: new Date(data.enteredAt),
-      }]),
-  )
+  //
+  // recreate state from serialized props
+  //
+  this.users = mapValues(this.users, data => ({
+    ...data,
+    enteredAt: new Date(data.enteredAt)
+  }))
 
   const onUpdateWrap = (fn) => {
     if (!onUpdate) {
