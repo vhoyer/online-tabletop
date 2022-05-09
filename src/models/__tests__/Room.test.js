@@ -3,6 +3,7 @@ import { Room } from '@models/Room'
 const utils = {
   userRemove: expect.any(Function),
   userAdd: expect.any(Function),
+  gameSet: expect.any(Function),
   toPlainObject: expect.any(Function),
   copy: expect.any(Function),
 }

@@ -85,7 +85,7 @@ export default {
       const { target: { files } } = event;
 
       if (files.length === 0) {
-        room.value.setGame(null)
+        room.value.gameSet(null)
         console.error('[APP] No file selected', files, event);
         return
       }
@@ -97,7 +97,7 @@ export default {
           const gameRaw = JSON.parse(fileContent)
           console.info('[APP] file read, add game to room', gameRaw)
 
-          room.value.setGame(new Game(gameRaw))
+          room.value.gameSet(new Game(gameRaw))
         } catch (error) {
           console.error('[APP] error parsing game file:', error)
         }
