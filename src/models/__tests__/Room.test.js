@@ -11,7 +11,7 @@ const utils = {
 describe('Models > Room', () => {
   def('subject', () => new Room($.base))
 
-  it('initiates as a empty room', () => {
+  it('initiates as an empty room', () => {
     expect($.subject).toEqual({
       ...utils,
       users: {},
