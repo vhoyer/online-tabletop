@@ -22,7 +22,9 @@ export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
     const roomRaw = snapshot.val()
     const room = new Room(roomRaw, {
       onUpdate(newValue, old) {
-        observableDiff(old, newValue.toPlainObject(), diff => ({
+        const newValuePlain = newValue.toPlainObject()
+
+        observableDiff(old, newValuePlain, diff => ({
           'N': () => { // indicates a newly added property/element
             const key = diff.path.join('/');
 
@@ -36,7 +38,13 @@ export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
             snapshot.child(key).ref.set(diff.rhs)
           },
           // 'D': () => {}, // indicates a property/element was deleted
-          // 'A': () => {}, // indicates a change occurred within an array
+          'A': () => { // indicates a change occurred within an array
+            const newArray = diff.path.reduce((value, next) => value[next], newValuePlain)
+            const key = diff.path.join('/');
+
+            console.info(`[APP][database] Override array "${key}", with:`, newArray)
+            snapshot.child(key).ref.set(newArray)
+          },
         })[diff.kind]?.())
       },
     })
