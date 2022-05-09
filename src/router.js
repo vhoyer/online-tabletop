@@ -8,11 +8,15 @@ export const router = createRouter({
     component: () => import('@pages/Home'),
   }, {
     path: '/room/:key',
-    name: 'room',
     component: () => import('@pages/Room'),
-  }, {
-    path: '/room/:key/table',
-    name: 'table',
-    component: () => import('@pages/Room/Table'),
+    children: [{
+      path: '',
+      name: 'room',
+      component: () => import('@pages/Room/Config'),
+    }, {
+      path: 'table',
+      name: 'table',
+      component: () => import('@pages/Room/Table'),
+    }],
   }],
 })

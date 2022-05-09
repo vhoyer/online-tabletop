@@ -11,6 +11,19 @@ export function Room(props = {}, { onUpdate } = {}) {
   //
   // recreate state from serialized props
   //
+  const createChild = (child, Klass) => {
+    if (!this[child]) return
+    if (this[child] instanceof Klass) return
+
+    this[child] = new Klass(this[child], {
+      onUpdate: (_current, oldChild) => {
+        const old = this.toPlainObject()
+        old[child] = oldChild;
+
+        onUpdate(this, old);
+      },
+    })
+  }
   const recreateState = () => {
     this.users = mapValues(this.users, data => ({
       ...data,
@@ -22,17 +35,7 @@ export function Room(props = {}, { onUpdate } = {}) {
     ]
 
     childModels.forEach(([child, Klass]) => {
-      if (!this[child]) return
-      if (this[child] instanceof Klass) return
-
-      this[child] = new Klass(this[child], {
-        onUpdate: (_current, oldChild) => {
-          const old = this.toPlainObject()
-          old[child] = oldChild;
-
-          onUpdate(this, old);
-        },
-      })
+      createChild(child, Klass)
     })
   }
   recreateState()
@@ -91,7 +94,8 @@ export function Room(props = {}, { onUpdate } = {}) {
   })
 
   this.gameSet = onUpdateWrap((game) => {
-    Object.assign(this, { game })
+    this.game = game
+    createChild('game', Game)
     return this
   })
 
