@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge'
 import { mapValues } from '@utils/object'
+import { Game } from '@models/Game'
 
 export function Room(props = {}, { onUpdate } = {}) {
   Object.assign(this, deepmerge({
@@ -14,6 +15,9 @@ export function Room(props = {}, { onUpdate } = {}) {
     ...data,
     enteredAt: new Date(data.enteredAt)
   }))
+  if (this.game) {
+    this.game = new Game(this.game)
+  }
 
   //
   // Private methods
