@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "name": "Solitaire",
+  "config": {},
+  "create": [
+    "define card Card @1",
+    {
+      "template": [
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>{value}</div>",
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>{value}</div>",
+        "<div style='font-size:8rem; font-weight:bold'>{value}</div>"
+      ]
+    },
+
+    "define deck Deck",
+    "for_in $topic $topicList @1",
+    [
+      "add_to_deck Deck Card @1",
+      {
+        "value": "$topic"
+      }
+    ],
+
+    "define pile PileDraw",
+    "define pile PileDead",
+
+    "define pile PileDiamonds",
+    "define pile PileHearts",
+    "define pile PileClubs",
+    "define pile PileSpades",
+
+    "define spread down PileOne",
+    "define spread down PileTwo",
+    "define spread down PileThree",
+    "define spread down PileFour",
+    "define spread down PileFive",
+    "define spread down PileSix",
+    "define spread down PileSeven",
+    ""
+  ],
+  "setup": [
+    "shuffle NumberDeck",
+    "shuffle TopicDeck",
+    ""
+  ]
+}
