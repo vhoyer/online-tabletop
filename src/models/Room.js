@@ -15,6 +15,10 @@ export function Room(props = {}, { onUpdate } = {}) {
     enteredAt: new Date(data.enteredAt)
   }))
 
+  //
+  // Private methods
+  //
+
   const onUpdateWrap = (fn) => {
     if (!onUpdate) {
       return (...args) => fn(...args)
