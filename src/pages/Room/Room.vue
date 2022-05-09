@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { onUnmounted, ref, watch, computed } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { roomSubscribe } from '@services/rooms'
 import { Game } from '@models/Game'
