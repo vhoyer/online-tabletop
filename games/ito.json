@@ -6,7 +6,10 @@
       "type": "string[]",
       "default": [
         "creature you would transform into",
-        "cute things"
+        "cute things",
+        "popular food",
+        "big animals",
+        "popular anime"
       ]
     }
   },
