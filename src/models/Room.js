@@ -1,11 +1,13 @@
 import deepmerge from 'deepmerge'
 import { mapValues } from '@utils/object'
 import { Game } from '@models/Game'
+import { Table } from '@models/Table'
 
 export function Room(props = {}, { onUpdate } = {}) {
   Object.assign(this, deepmerge({
     users: {},
     game: null,
+    table: null,
   }, props))
 
   //
@@ -32,6 +34,7 @@ export function Room(props = {}, { onUpdate } = {}) {
 
     const childModels = [
       ['game', Game],
+      ['table', Table],
     ]
 
     childModels.forEach(([child, Klass]) => {
@@ -96,6 +99,13 @@ export function Room(props = {}, { onUpdate } = {}) {
   this.gameSet = onUpdateWrap((game) => {
     this.game = game
     createChild('game', Game)
+    return this
+  })
+
+  this.tableCreate = onUpdateWrap(() => {
+    this.table = this.table ?? {}
+    createChild('table', Table)
+    this.table.createTable(this.game)
     return this
   })
 
