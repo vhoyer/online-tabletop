@@ -1,8 +1,8 @@
-import { mapValues } from '@utils/object'
+import { mapValues, get } from '@utils/object'
 import { Deck, Card } from './entities'
 
 export function Table(props = {}, { onUpdate } = {}) {
-  const runtime = (cursor, state) => {
+  const runtime = (cursor, state = {}) => {
     for (let [_index, statement] of cursor) {
       if (typeof statement !== 'string') continue;
 
@@ -20,7 +20,7 @@ export function Table(props = {}, { onUpdate } = {}) {
           }
 
           if (part.startsWith('$')) {
-            return state[part.substring(1)] ?? part
+            return get(state, part.substring(1)) ?? part
           }
 
           return part
@@ -71,8 +71,8 @@ export function Table(props = {}, { onUpdate } = {}) {
 
           this.objects[deckName].value.addCard(new Card({
             template: this.templates[template].value,
-            data: mapValues(substitutions, v => v.replace(/\$\{\w+\}/g, (match) => {
-              return state[match.substring(2, match.length - 1)]
+            data: mapValues(substitutions, v => v.replace(/\$\{[\w.]+\}/g, (match) => {
+              return get(state, match.substring(2, match.length - 1))
             })),
           }))
         },
