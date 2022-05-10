@@ -2,13 +2,24 @@
   <div>
     I'm tables
 
-    <pre v-text="tableRaw" />
+    <template v-for="deck in table.objects">
+      <Card
+        v-for="card in deck.value.stack"
+        :key="card.data.default"
+        :card="card"
+      />
+    </template>
   </div>
 </template>
 
 <script>
+import Card from '@components/Card'
+
 export default {
   name: 'Table',
+  components: {
+    Card,
+  },
   props: {
     room: {
       type: Object,
@@ -17,6 +28,8 @@ export default {
   },
   setup(props) {
     props.room.tableCreate()
+
+    console.log('[debug][table]', props.room.table)
 
     return {
       table: props.room.table,

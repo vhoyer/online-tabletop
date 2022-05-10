@@ -5,26 +5,19 @@
 </template>
 
 <script>
-import DOMPurify from 'dompurify'
-import { cardType } from '@models/card.js';
+import { Card } from '@models/entities'
 
 export default {
   name: 'Card',
   props: {
-    type: {
-      type: Object,
-      required: true,
-    },
-    data: {
-      type: Object,
+    card: {
+      type: Card,
       required: true,
     },
   },
   setup(props) {
-    const type = cardType(props.type)
-
     return {
-      html: DOMPurify.sanitize(type.render(props.data)),
+      html: props.card.rendered,
     }
   },
 }

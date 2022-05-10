@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge'
+import DOMPurify from 'dompurify'
 
 export function Card(props = {}) {
   Object.assign(this, deepmerge({
@@ -6,9 +7,11 @@ export function Card(props = {}) {
     data: {},
   }, props))
 
-  this.rendered = this.template.replace(/\$\{\w+\}/g, (match) => {
-    return this.data[match.substring(1, match.length - 1)]
-  })
+  this.rendered = DOMPurify.sanitize(
+    this.template.replace(/\$\{\w+\}/g, (match) => {
+      return this.data[match.substring(2, match.length - 1)]
+    })
+  )
 }
 
 export function Deck(props = {}) {
