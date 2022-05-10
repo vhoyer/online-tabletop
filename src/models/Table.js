@@ -3,6 +3,7 @@ import { Deck, Card } from './entities'
 
 export function Table(props = {}, { onUpdate } = {}) {
   const runtime = (cursor, state = {}) => {
+    console.groupCollapsed('runtime block')
     for (let [_index, statement] of cursor) {
       if (typeof statement !== 'string') continue;
 
@@ -26,7 +27,7 @@ export function Table(props = {}, { onUpdate } = {}) {
           return part
         })
 
-      console.warn('[debug]', parts)
+      console.info('[debug][statement]', parts)
       const command = parts.shift()
 
       ;({
@@ -78,6 +79,7 @@ export function Table(props = {}, { onUpdate } = {}) {
         },
       })[command]?.()
     }
+    console.groupEnd()
   }
 
   this.createTable = (game) => {
