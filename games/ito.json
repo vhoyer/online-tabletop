@@ -14,44 +14,44 @@
     }
   },
   "create": [
-    "define card NumberCard @1",
+    "define template NumberCard card @next",
     {
       "template": [
-        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>{default}</div>",
-        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>{default}</div>",
-        "<div style='font-size:8rem; font-weight:bold'>{default}</div>"
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>${default}</div>",
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>${default}</div>",
+        "<div style='font-size:8rem; font-weight:bold'>${default}</div>"
       ]
     },
 
-    "define card TopicCard @1",
+    "define template TopicCard card @next",
     {
-      "template": ["<div style='font-size:2rem;'>{default}</div>"]
+      "template": ["<div style='font-size:2rem;'>${default}</div>"]
     },
 
-    "define deck TopicDeck",
-    "for_in $topic $topicList @1",
+    "define object TopicDeck deck",
+    "for_in topic $topicList @next",
     [
-      "add_to_deck TopicDeck TopicCard @1",
+      "add_to_deck TopicDeck TopicCard @next",
       {
-        "default": "$topic"
+        "default": "${topic}"
       }
     ],
 
-    "define deck NumberDeck",
-    "for_in $number 1..100 @1",
+    "define object NumberDeck deck",
+    "for_in number 1..100 @next",
     [
-      "add_to_deck NumberDeck NumberCard @1",
+      "add_to_deck NumberDeck NumberCard @next",
       {
-        "default": "$number"
+        "default": "${number}"
       }
     ],
 
     "define pile TablePile",
-    ""
+    null
   ],
   "setup": [
     "shuffle NumberDeck",
     "shuffle TopicDeck",
-    ""
+    null
   ]
 }

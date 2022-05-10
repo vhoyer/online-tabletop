@@ -1,24 +1,35 @@
 {
   "version": 1,
   "name": "Solitaire",
-  "config": {},
+  "config": {
+    "what": {
+      "type": "string[]",
+      "default": ["string[]"]
+    }
+  },
   "create": [
-    "define card Card @1",
+    "define template Card card @next",
     {
       "template": [
-        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>{value}</div>",
-        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>{value}</div>",
-        "<div style='font-size:8rem; font-weight:bold'>{value}</div>"
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>${value}</div>",
+        "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>${value}</div>",
+        "<div style='font-size:8rem; font-weight:bold'>${value}</div>"
       ]
     },
 
-    "define deck Deck",
-    "for_in $topic $topicList @1",
+    "define object Deck deck",
+    "for_in suit @next @next",
+    ["♣", "♦", "♥", "♠"],
     [
-      "add_to_deck Deck Card @1",
-      {
-        "value": "$topic"
-      }
+      "for_in number 1..10 @next",
+      [
+        "add_to_deck Deck Card @next", { "value": "${suit}${number}" },
+        null
+      ],
+      "add_to_deck Deck Card @next", { "value": "${suit}J" },
+      "add_to_deck Deck Card @next", { "value": "${suit}Q" },
+      "add_to_deck Deck Card @next", { "value": "${suit}K" },
+      null
     ],
 
     "define pile PileDraw",
@@ -29,18 +40,17 @@
     "define pile PileClubs",
     "define pile PileSpades",
 
-    "define spread down PileOne",
-    "define spread down PileTwo",
-    "define spread down PileThree",
-    "define spread down PileFour",
-    "define spread down PileFive",
-    "define spread down PileSix",
-    "define spread down PileSeven",
-    ""
+    "define pile PileOne   @next", { "spread": "down" },
+    "define pile PileTwo   @next", { "spread": "down" },
+    "define pile PileThree @next", { "spread": "down" },
+    "define pile PileFour  @next", { "spread": "down" },
+    "define pile PileFive  @next", { "spread": "down" },
+    "define pile PileSix   @next", { "spread": "down" },
+    "define pile PileSeven @next", { "spread": "down" },
+    null
   ],
   "setup": [
-    "shuffle NumberDeck",
-    "shuffle TopicDeck",
-    ""
+    "shuffle Deck",
+    null
   ]
 }
