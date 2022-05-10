@@ -1,12 +1,7 @@
 {
   "version": 1,
   "name": "Solitaire",
-  "config": {
-    "what": {
-      "type": "string[]",
-      "default": ["string[]"]
-    }
-  },
+  "config": null,
   "create": [
     "define template Card card @next",
     {

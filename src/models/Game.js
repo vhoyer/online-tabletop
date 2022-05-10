@@ -39,7 +39,9 @@ export function Game(props = {}, { onUpdate } = {}) {
     old = this.toPlainObject();
   }
 
-  this.config = mapValues(this.config, value => configProxy(value, updateNotifier))
+  if (this.config) {
+    this.config = mapValues(this.config, value => configProxy(value, updateNotifier))
+  }
 
   console.log('[debug][game]', this)
 

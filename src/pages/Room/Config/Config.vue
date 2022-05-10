@@ -2,21 +2,19 @@
   <section>
     <h2>game info</h2>
 
+    <input type="file" @change="onGameChange" accept="application/json">
+
     <div>
       Selected game: {{ room.game?.name ?? 'None' }}
     </div>
 
-    <fieldset v-if="Boolean(room.game)">
+    <fieldset v-if="Boolean(room.game?.config)">
       <template :key="name" v-for="(options, name) in room.game.config">
         <label :for="name">{{ name }}</label>
         <br>
         <textarea :id="name" cols="100" rows="10" v-model="options.editableValue" />
       </template>
     </fieldset>
-
-    <input type="file" @change="onGameChange" accept="application/json">
-
-    <br>
 
     <router-link
       v-if="Boolean(room.game)"
