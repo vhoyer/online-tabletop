@@ -1,4 +1,6 @@
 export const mapEntries = (object, transformer) => {
+  if (!Boolean(object)) return undefined;
+
   return Object.fromEntries(
     Object.entries(object)
       .map(transformer)
