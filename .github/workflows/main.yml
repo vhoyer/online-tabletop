@@ -1,0 +1,41 @@
+name: deploy_to_firebase_hosting
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  deploy_to_firebase_hosting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@master
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: build-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Load Node Version
+        id: node-version
+        run: echo "::set-output name=name::$(grep NODE_VERSION .env | sed 's/^.*=//')"
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ steps.node-version.outputs.name }}
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

@@ -5,7 +5,7 @@ services:
     tty: true
     stdin_open: true
     # env_file: envs/global-secret.env
-    image: node:14
+    image: node:$NODE_VERSION
     working_dir: /app
     command: make startup
     ports:
