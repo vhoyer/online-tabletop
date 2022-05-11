@@ -30,6 +30,7 @@
     "bdd-lazy-var": "^2.6.1",
     "eslint": "^7.30.0",
     "eslint-plugin-vue": "^7.13.0",
+    "firebase-tools": "^10.9.0",
     "jest": "^27.0.6",
     "jest-jasmine2": "^27.0.6",
     "sass": "^1.35.1",
