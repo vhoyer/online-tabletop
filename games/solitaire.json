@@ -33,7 +33,9 @@
       "add_to Deck Card @next", { "value": "${suit.0}K", "color": "${suit.1}" },
       null
     ],
-
+    null
+  ],
+  "setup": [
     "define pile PileDraw",
     "define pile PileDead",
 
@@ -49,9 +51,7 @@
     "define pile PileFive  @next", { "spread": "down" },
     "define pile PileSix   @next", { "spread": "down" },
     "define pile PileSeven @next", { "spread": "down" },
-    null
-  ],
-  "setup": [
+
     "shuffle Deck",
     null
   ]
