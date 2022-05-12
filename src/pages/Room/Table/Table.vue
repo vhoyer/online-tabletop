@@ -1,7 +1,5 @@
 <template>
   <div>
-    I'm tables
-
     <template v-for="deck in table.objects">
       <Card
         v-for="card in deck.value.stack"
