@@ -31,7 +31,7 @@
     "define object TopicDeck deck",
     "for_in topic $topicList @next",
     [
-      "add_to_deck TopicDeck TopicCard @next",
+      "add_to TopicDeck TopicCard @next",
       {
         "default": "${topic}"
       }
@@ -40,7 +40,7 @@
     "define object NumberDeck deck",
     "for_in number 1..100 @next",
     [
-      "add_to_deck NumberDeck NumberCard @next",
+      "add_to NumberDeck NumberCard @next",
       {
         "default": "${number}"
       }

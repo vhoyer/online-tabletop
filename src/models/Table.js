@@ -67,10 +67,10 @@ export function Table(props = {}, { onUpdate } = {}) {
             })
           })
         },
-        'add_to_deck': () => {
-          const [deckName, template, substitutions] = parts
+        'add_to': () => {
+          const [container, template, substitutions] = parts
 
-          this.objects[deckName].value.addCard(new Card({
+          this.objects[container].value.addCard(new Card({
             template: this.templates[template].value,
             data: mapValues(substitutions, v => v.replace(/\$\{[\w.]+\}/g, (match) => {
               return get(state, match.substring(2, match.length - 1))

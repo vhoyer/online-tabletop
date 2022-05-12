@@ -25,12 +25,12 @@
     [
       "for_in number 1..10 @next",
       [
-        "add_to_deck Deck Card @next", { "value": "${suit.0}${number}", "color": "${suit.1}" },
+        "add_to Deck Card @next", { "value": "${suit.0}${number}", "color": "${suit.1}" },
         null
       ],
-      "add_to_deck Deck Card @next", { "value": "${suit.0}J", "color": "${suit.1}" },
-      "add_to_deck Deck Card @next", { "value": "${suit.0}Q", "color": "${suit.1}" },
-      "add_to_deck Deck Card @next", { "value": "${suit.0}K", "color": "${suit.1}" },
+      "add_to Deck Card @next", { "value": "${suit.0}J", "color": "${suit.1}" },
+      "add_to Deck Card @next", { "value": "${suit.0}Q", "color": "${suit.1}" },
+      "add_to Deck Card @next", { "value": "${suit.0}K", "color": "${suit.1}" },
       null
     ],
 
