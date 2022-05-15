@@ -25,34 +25,46 @@
     [
       "for_in number 1..10 @next",
       [
-        "add_to Deck Card @next", { "value": "${suit.0}${number}", "color": "${suit.1}" },
+        "add_to Deck template Card @next", { "value": "${suit.0}${number}", "color": "${suit.1}" },
         null
       ],
-      "add_to Deck Card @next", { "value": "${suit.0}J", "color": "${suit.1}" },
-      "add_to Deck Card @next", { "value": "${suit.0}Q", "color": "${suit.1}" },
-      "add_to Deck Card @next", { "value": "${suit.0}K", "color": "${suit.1}" },
+      "add_to Deck template Card @next", { "value": "${suit.0}J", "color": "${suit.1}" },
+      "add_to Deck template Card @next", { "value": "${suit.0}Q", "color": "${suit.1}" },
+      "add_to Deck template Card @next", { "value": "${suit.0}K", "color": "${suit.1}" },
       null
     ],
+
+    "define object PileDraw pile @next", { "pos": "0crd 0crd" },
+    "define object PileDead pile @next", { "pos": "1crd 0crd" },
+
+    "define object PileDiamonds pile @next", { "pos": "3crd 0crd" },
+    "define object PileHearts   pile @next", { "pos": "4crd 0crd" },
+    "define object PileClubs    pile @next", { "pos": "5crd 0crd" },
+    "define object PileSpades   pile @next", { "pos": "6crd 0crd" },
+
+    "define object Pile1 pile @next", { "pos": "1crd 1crd", "spread": "down" },
+    "define object Pile2 pile @next", { "pos": "2crd 1crd", "spread": "down" },
+    "define object Pile3 pile @next", { "pos": "3crd 1crd", "spread": "down" },
+    "define object Pile4 pile @next", { "pos": "4crd 1crd", "spread": "down" },
+    "define object Pile5 pile @next", { "pos": "5crd 1crd", "spread": "down" },
+    "define object Pile6 pile @next", { "pos": "6crd 1crd", "spread": "down" },
+    "define object Pile7 pile @next", { "pos": "7crd 1crd", "spread": "down" },
+
+    "add_to PileDraw object Deck",
     null
   ],
   "setup": [
-    "define pile PileDraw",
-    "define pile PileDead",
+    "object Deck shuffle",
 
-    "define pile PileDiamonds",
-    "define pile PileHearts",
-    "define pile PileClubs",
-    "define pile PileSpades",
-
-    "define pile PileOne   @next", { "spread": "down" },
-    "define pile PileTwo   @next", { "spread": "down" },
-    "define pile PileThree @next", { "spread": "down" },
-    "define pile PileFour  @next", { "spread": "down" },
-    "define pile PileFive  @next", { "spread": "down" },
-    "define pile PileSix   @next", { "spread": "down" },
-    "define pile PileSeven @next", { "spread": "down" },
-
-    "shuffle Deck",
+    "for_in pile 1..7 @next",
+    [
+      "for_in card 1..${pile} @next",
+      [
+        "object Deck draw @next", { "target": "Pile${pile}", "flip": "$={eq $pile $card}" },
+        null
+      ],
+      null
+    ],
     null
   ]
 }

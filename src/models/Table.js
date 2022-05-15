@@ -76,12 +76,19 @@ export function Table(props = {}, { onUpdate } = {}) {
           })
         },
         'add_to': () => {
-          const [container, template, substitutions] = parts
+          const [container, type, ...rest] = parts
 
-          this.objects[container].value.addCard(new Card({
-            template: this.templates[template].value,
-            data: mapValues(substitutions, v => dynamicString(v, state)),
-          }))
+          ;({
+            'template': (template, substitutions) => {
+              this.objects[container].value.addCard(new Card({
+                template: this.templates[template].value,
+                data: mapValues(substitutions, v => dynamicString(v, state)),
+              }))
+            },
+            'object': (entity) => {
+              this.objects[container]?.addObject?.(this.objects[entity])
+            },
+          })[type]?.(...rest)
         },
       })[command]?.()
     }
