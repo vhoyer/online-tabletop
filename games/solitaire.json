@@ -54,13 +54,13 @@
     null
   ],
   "setup": [
-    "object Deck shuffle",
+    "object PileDraw shuffle",
 
     "for_in pile 1..7 @next",
     [
       "for_in card 1..${pile} @next",
       [
-        "object Deck draw @next", { "target": "Pile${pile}", "flip": "$=>eq $pile $card" },
+        "object PileDraw draw @next", { "target": "Pile${pile}", "flip": "$=>eq $pile $card" },
         null
       ],
       null
