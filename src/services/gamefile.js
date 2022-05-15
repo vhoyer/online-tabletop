@@ -124,11 +124,22 @@ const eq = (left, right) => {
   return left === right
 }
 
+const object = ({ memory }, name, actionName, parameters) => {
+  const obj = memory.objects[name]
+
+  if (!obj) throw new Error(`Object "${name}" does not exist`)
+  const action = obj.value[actionName]
+  if (typeof action !== 'function') throw new Error(`Object "${name}" does not have "${actionName}" action`)
+
+  action(parameters)
+}
+
 const commandList = {
   define,
   for_in,
   add_to,
   eq,
+  object,
 }
 
 const executeOne = (env, [commandName, ...parts]) => {
