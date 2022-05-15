@@ -60,7 +60,7 @@
     [
       "for_in card 1..${pile} @next",
       [
-        "object Deck draw @next", { "target": "Pile${pile}", "flip": "$={eq $pile $card}" },
+        "object Deck draw @next", { "target": "Pile${pile}", "flip": "$=>eq $pile $card" },
         null
       ],
       null
