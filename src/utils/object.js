@@ -16,16 +16,9 @@ export const mapValues = (object, transformer) => {
 export const executeOnEntries = (original, transformerList = []) => {
   return Object.fromEntries(
     transformerList.reduce(
-      (newObj, transformer) => transformer(newObj),
+      (entries, transformer) => transformer(entries),
       Object.entries(original),
     ),
-  )
-}
-
-export const executeOnValues = (original, transformerList) => {
-  return executeOnEntries(
-    original,
-    transformerList.map(transformer => ([key, value]) => [key, transformer(value)]),
   )
 }
 
