@@ -2,13 +2,21 @@ import { mapValues, get } from '@utils/object'
 import { Deck, Card } from './entities'
 
 export function Table(props = {}, { onUpdate } = {}) {
+  const dynamicString = (value, state) => {
+    return value.replace(/\$\{[\w.]+\}/g, (match) => {
+      return get(state, match.substring(2, match.length - 1))
+    })
+  }
+
   const runtime = (cursor, state = {}) => {
     console.groupCollapsed('runtime block')
     for (let [_index, statement] of cursor) {
       if (typeof statement !== 'string') continue;
 
       const parts = statement.replace(/ {2,}/g, ' ').split(' ')
-        .map(part => {
+        .map(partRaw => {
+          const part = dynamicString(partRaw, state)
+
           if ('@next' === part) {
             const [_index, nextItem] = cursor.next().value
             return nextItem
@@ -72,9 +80,7 @@ export function Table(props = {}, { onUpdate } = {}) {
 
           this.objects[container].value.addCard(new Card({
             template: this.templates[template].value,
-            data: mapValues(substitutions, v => v.replace(/\$\{[\w.]+\}/g, (match) => {
-              return get(state, match.substring(2, match.length - 1))
-            })),
+            data: mapValues(substitutions, v => dynamicString(v, state)),
           }))
         },
       })[command]?.()
