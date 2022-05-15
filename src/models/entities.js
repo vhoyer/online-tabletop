@@ -1,5 +1,12 @@
 import deepmerge from 'deepmerge'
 import DOMPurify from 'dompurify'
+import { shuffle } from '@utils/array'
+
+const inheritActions = (self, entity, actionList) => {
+  actionList.forEach(action => {
+    self[action] = (...args) => entity[action](...args)
+  })
+}
 
 export const base = {
   createObject(_props) {
@@ -45,6 +52,13 @@ export function Deck(props = {}) {
   this.merge = (deck) => {
     this.stack.push(...deck.stack)
   }
+
+  this.shuffle = () => {
+    this.stack = shuffle(this.stack)
+  }
+
+  this.draw = ({ target, flip = true }) => {
+  }
 }
 
 export function Pile(props = {}) {
@@ -55,6 +69,11 @@ export function Pile(props = {}) {
   }, props))
 
   this.deck = new Deck(this.deck)
+
+  inheritActions(this, this.deck, [
+    'draw',
+    'shuffle',
+  ])
 
   this.addObject = (child) => {
     if (child instanceof Card) {
