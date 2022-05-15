@@ -13,6 +13,22 @@ export const mapValues = (object, transformer) => {
   return mapEntries(object, ([key, value]) => [key, transformer(value)])
 }
 
+export const executeOnEntries = (original, transformerList = []) => {
+  return Object.fromEntries(
+    transformerList.reduce(
+      (newObj, transformer) => transformer(newObj),
+      Object.entries(original),
+    ),
+  )
+}
+
+export const executeOnValues = (original, transformerList) => {
+  return executeOnEntries(
+    original,
+    transformerList.map(transformer => ([key, value]) => [key, transformer(value)]),
+  )
+}
+
 export const set = (original, name, value) => {
   const object = clone(original);
   const path = name.split('.');
