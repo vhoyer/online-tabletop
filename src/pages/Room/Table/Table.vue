@@ -1,8 +1,8 @@
 <template>
   <div>
-    <template v-for="deck in table.objects">
+    <template v-for="pile in table.objects">
       <Card
-        v-for="card in deck.value.stack"
+        v-for="card in pile.value.deck.stack"
         :key="card.data.default"
         :card="card"
       />
