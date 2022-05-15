@@ -29,6 +29,8 @@ export default {
 
     console.log('[debug][table]', props.room.table)
 
+    props.room.tableSetup()
+
     return {
       table: props.room.table,
       tableRaw: JSON.stringify(props.room.table, null, 2),

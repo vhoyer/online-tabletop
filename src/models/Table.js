@@ -10,5 +10,15 @@ export function Table(props = {}, { onUpdate } = {}) {
     const cursorCreate = game.create.entries()
 
     execute(this, cursorCreate, variables, 'create')
+
+    return this
+  }
+
+  this.setupTable = (game) => {
+    const variables = mapValues(game.config, i => i.value)
+
+    execute(this, game.setup.entries(), variables, 'setup')
+
+    return this
   }
 }

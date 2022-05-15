@@ -109,6 +109,13 @@ export function Room(props = {}, { onUpdate } = {}) {
     return this
   })
 
+  this.tableSetup = onUpdateWrap(() => {
+    this.table = this.table ?? {}
+    createChild('table', Table)
+    this.table.setupTable(this.game)
+    return this
+  })
+
   this.copy = () => {
     return new Room(this.toPlainObject())
   }
