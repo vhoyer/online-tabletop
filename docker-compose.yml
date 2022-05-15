@@ -1,7 +1,7 @@
 version: "3.5"
 
 services:
-  online-tabletop:
+  ctrl-money:
     tty: true
     stdin_open: true
     # env_file: envs/global-secret.env
@@ -9,10 +9,10 @@ services:
     working_dir: /app
     command: make startup
     ports:
-      - 3123:3123
+      - 5031:5031
     volumes:
       - ./:/app
-      - online-tabletop-node-modules:/app/node_modules
+      - ctrl-money-node-modules:/app/node_modules
 
 volumes:
-  online-tabletop-node-modules:
+  ctrl-money-node-modules:
