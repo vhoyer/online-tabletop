@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge'
 import DOMPurify from 'dompurify'
 import { shuffle } from '@utils/array'
 
-const inheritActions = (self, entity, actionList) => {
+const forwardActions = (self, entity, actionList) => {
   actionList.forEach(action => {
     self[action] = (...args) => entity[action](...args)
   })
@@ -70,7 +70,7 @@ export function Pile(props = {}) {
 
   this.deck = new Deck(this.deck)
 
-  inheritActions(this, this.deck, [
+  forwardActions(this, this.deck, [
     'draw',
     'shuffle',
   ])
