@@ -1,11 +1,5 @@
 import { get, executeOnEntries } from '@utils/object'
-import { Card, Deck, Pile } from '@models/entities'
-
-const TypeDictionary = {
-  'card': Card,
-  'deck': Deck,
-  'pile': Pile,
-}
+import { TypeDictionary } from '@models/entities'
 
 const regexVariableSubstitute = /\$\{[\w.]+\}/g // ${variable.name}
 const regexNumberRange = /^\d+\.\.\d+$/ // 1..10

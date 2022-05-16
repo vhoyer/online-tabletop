@@ -85,3 +85,9 @@ export function Pile(props = {}) {
     }
   }
 }
+
+export const TypeDictionary = {
+  'card': Card,
+  'deck': Deck,
+  'pile': Pile,
+}
