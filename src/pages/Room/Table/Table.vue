@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="false">
     <template v-for="pile in table.objects">
       <Card
         v-for="card in pile.value.deck.stack"
@@ -8,15 +8,22 @@
       />
     </template>
   </div>
+
+  <div>
+    <Tabletop>
+    </Tabletop>
+  </div>
 </template>
 
 <script>
 import Card from '@components/Card'
+import Tabletop from '@components/Tabletop'
 
 export default {
   name: 'Table',
   components: {
     Card,
+    Tabletop,
   },
   props: {
     room: {
