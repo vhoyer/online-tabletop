@@ -1,35 +1,24 @@
 <template>
-  <form @submit.prevent="$emit('submit', user)">
+  <form @submit.prevent="onSubmit">
     <input
       v-model="user.name"
       required
       type="text"
     >
 
-    <button @click="user.hasLoggedIn = true">
-      Start
-    </button>
+    <button>Start</button>
   </form>
 </template>
 
-<script>
+<script setup>
 import { user } from '@store/user'
 
-export default {
-  name: 'UserSetup',
-  props: {
-    onSubmit: {
-      type: Function,
-      default: () => {},
-    },
-  },
-  emits: [
-    'submit',
-  ],
-  setup() {
-    return {
-      user,
-    }
-  },
+const emit = defineEmits([
+  'submit',
+])
+
+const onSubmit = () => {
+  user.hasLoggedIn = true
+  emit('submit', user)
 }
 </script>
