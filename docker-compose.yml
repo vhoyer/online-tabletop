@@ -1,7 +1,7 @@
 version: "3.5"
 
 services:
-  ctrl-money:
+  online-tabletop:
     tty: true
     stdin_open: true
     network_mode: host
@@ -13,7 +13,7 @@ services:
       - 5031:5031
     volumes:
       - ./:/app
-      - ctrl-money-node-modules:/app/node_modules
+      - online-tabletop-node-modules:/app/node_modules
 
 volumes:
-  ctrl-money-node-modules:
+  online-tabletop-node-modules:
