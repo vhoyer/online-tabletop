@@ -20,6 +20,8 @@ export function roomSubscribe(id, currentUser, callback, onError = () => {}) {
     disconnectInstruction?.cancel()
 
     const roomRaw = snapshot.val()
+    console.info('[APP][database] incoming change', roomRaw)
+
     const room = new Room(roomRaw, {
       onUpdate(newValue, old) {
         const newValuePlain = newValue.toPlainObject()
