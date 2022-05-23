@@ -6,10 +6,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const canvas = ref()
-const ctx = computed(() => canvas.value.getContext('2d'))
 
 const updateCanvasSize = () => {
   const { width, height } = canvas.value.getBoundingClientRect()
@@ -29,15 +28,17 @@ onMounted(() => {
   const width = canvas.value.width
   const height = canvas.value.height
 
+  const gl = canvas.value.getContext('webgl')
+
   console.log({
     canvas,
     width,
     height,
-    ctx,
+    gl,
   })
 
-  ctx.value.fillStyle = 'green'
-  ctx.value.fillRect(0, 0, width, height);
+  gl.clearColor(0.95, 0.81, 0.75, 1)
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 })
 </script>
 
