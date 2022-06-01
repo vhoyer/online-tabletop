@@ -52,18 +52,17 @@ onMounted(() => {
   });
   world.on('pointerup', setHitAreaToView);
 
-  const grid = [ new PIXI.Graphics(), new PIXI.Graphics(), new PIXI.Graphics(), new PIXI.Graphics() ];
+  const gridRowSize = 2;
+  const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
 
   const gridSize = 100;
   const gridOffset = gridSize / 2;
   const xEnd = (Math.ceil((app.value.screen.width  - gridOffset) / gridSize) + 1) * gridSize;
   const yEnd = (Math.ceil((app.value.screen.height - gridOffset) / gridSize) + 1) * gridSize;
-  // grid.forEach(g => g.x = -1 * gridOffset);
-  // grid.forEach(g => g.y = -1 * gridOffset);;
 
   // reposition
-  grid.forEach((g, index) => g.x = (xEnd * (index % 2)));
-  grid.forEach((g, index) => g.y = (yEnd * Math.floor(index / 2)));;
+  grid.forEach((g, index) => g.x = (xEnd * (index % gridRowSize)));
+  grid.forEach((g, index) => g.y = (yEnd * Math.floor(index / gridRowSize)));;
 
   grid.forEach(g => g.lineStyle({
     width: 1,
@@ -79,7 +78,13 @@ onMounted(() => {
     grid.forEach(g => g.lineTo(xEnd, gridSize * (Number(y) + 1) - gridOffset));
   }
 
+  grid.forEach((g, index) => app.value.ticker.add(() => {
+    g.x = xEnd * (Math.floor(-world.x / xEnd) + (index % gridRowSize))
+    g.y = yEnd * (Math.floor(-world.y / yEnd) + Math.floor(index / gridRowSize))
+  }))
+
   grid.forEach(g => world.addChild(g));
+  window.world = world;
 
   app.value.stage.addChild(world);
 })
