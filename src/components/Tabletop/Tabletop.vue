@@ -12,6 +12,7 @@ import * as PIXI from 'pixi.js'
 
 const canvas = ref()
 const app = ref()
+const world = ref()
 
 // const COLOR_FLAME = 0xE55934;
 const COLOR_TIMBERWOLF = 0xD8DAD3;
@@ -84,7 +85,7 @@ onMounted(() => {
   }))
 
   grid.forEach(g => world.addChild(g));
-  window.world = world;
+  world.value = window.world = world;
 
   app.value.stage.addChild(world);
 })
@@ -96,7 +97,8 @@ onUnmounted(() => {
   })
 })
 
-provide('tabletop', app)
+provide('tabletopApplication', app)
+provide('tabletop', world)
 </script>
 
 <style>
