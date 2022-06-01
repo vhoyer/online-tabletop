@@ -3,6 +3,8 @@
     ref="canvas"
     class="tabletop"
   />
+
+  <slot />
 </template>
 
 <script setup>
@@ -12,7 +14,7 @@ import * as PIXI from 'pixi.js'
 
 const canvas = ref()
 const app = ref()
-const world = ref()
+const worldRef = ref()
 
 // const COLOR_FLAME = 0xE55934;
 const COLOR_TIMBERWOLF = 0xD8DAD3;
@@ -85,7 +87,8 @@ onMounted(() => {
   }))
 
   grid.forEach(g => world.addChild(g));
-  world.value = window.world = world;
+  worldRef.value = world;
+  window.world = world;
 
   app.value.stage.addChild(world);
 })
@@ -98,7 +101,7 @@ onUnmounted(() => {
 })
 
 provide('tabletopApplication', app)
-provide('tabletop', world)
+provide('tabletop', worldRef)
 </script>
 
 <style>
