@@ -8,7 +8,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue'
 import { xyAdd, xyNeg } from '@utils/coordinates';
-import '@pixi/events';
 import * as PIXI from 'pixi.js'
 
 const canvas = ref()
@@ -36,12 +35,12 @@ onMounted(() => {
   }
   setHitAreaToView();
   const moveStart = { x: 0 , y: 0 };
-  world.addEventListener('pointerdown', (e) => {
+  world.on('pointerdown', (e) => {
     const screenPoint = xyAdd(xyNeg(world), e.data.global)
 
     Object.assign(moveStart, screenPoint);
   });
-  world.addEventListener('pointermove', (e) => {
+  world.on('pointermove', (e) => {
     const screenPoint = xyAdd(xyNeg(world), e.data.global)
 
     const moveNow = screenPoint;
@@ -49,7 +48,7 @@ onMounted(() => {
 
     Object.assign(world, xyAdd(world, moveDiff))
   });
-  world.addEventListener('pointerup', setHitAreaToView);
+  world.on('pointerup', setHitAreaToView);
 
   const grid = new PIXI.Graphics();
 
