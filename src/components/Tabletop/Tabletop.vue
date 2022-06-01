@@ -27,7 +27,7 @@ onMounted(() => {
     backgroundColor: COLOR_TIMBERWOLF,
   })
 
-  const world = new PIXI.Graphics();
+  const world = new PIXI.Container();
   world.interactive = true;
 
   const setHitAreaToView = () => {
@@ -41,6 +41,8 @@ onMounted(() => {
     Object.assign(moveStart, screenPoint);
   });
   world.on('pointermove', (e) => {
+    if (e.data.buttons <= 0) return;
+
     const screenPoint = xyAdd(xyNeg(world), e.data.global)
 
     const moveNow = screenPoint;
@@ -50,30 +52,35 @@ onMounted(() => {
   });
   world.on('pointerup', setHitAreaToView);
 
-  const grid = new PIXI.Graphics();
+  const grid = [ new PIXI.Graphics(), new PIXI.Graphics(), new PIXI.Graphics(), new PIXI.Graphics() ];
 
   const gridSize = 100;
   const gridOffset = gridSize / 2;
-  grid.x = -1 * gridOffset;
-  grid.y = -1 * gridOffset;
-  const xEnd = app.value.screen.width + gridSize;
-  const yEnd = app.value.screen.height + gridSize;
+  const xEnd = (Math.ceil((app.value.screen.width  - gridOffset) / gridSize) + 1) * gridSize;
+  const yEnd = (Math.ceil((app.value.screen.height - gridOffset) / gridSize) + 1) * gridSize;
+  // grid.forEach(g => g.x = -1 * gridOffset);
+  // grid.forEach(g => g.y = -1 * gridOffset);;
 
-  grid.lineStyle({
+  // reposition
+  grid.forEach((g, index) => g.x = (xEnd * (index % 2)));
+  grid.forEach((g, index) => g.y = (yEnd * Math.floor(index / 2)));;
+
+  grid.forEach(g => g.lineStyle({
     width: 1,
     color: COLOR_DARK_OLIVE_GREEN,
     alpha: 0.4,
-  });
+  }));
   for (const x in Array.from({ length: Math.ceil(xEnd / gridSize) })) {
-    grid.moveTo(gridSize * x, 0);
-    grid.lineTo(gridSize * x, yEnd);
+    grid.forEach(g => g.moveTo(gridSize * (Number(x) + 1) - gridOffset, 0));
+    grid.forEach(g => g.lineTo(gridSize * (Number(x) + 1) - gridOffset, yEnd));
   }
   for (const y in Array.from({ length: Math.ceil(yEnd / gridSize) })) {
-    grid.moveTo(0, gridSize * y);
-    grid.lineTo(xEnd, gridSize * y);
+    grid.forEach(g => g.moveTo(0,    gridSize * (Number(y) + 1) - gridOffset));
+    grid.forEach(g => g.lineTo(xEnd, gridSize * (Number(y) + 1) - gridOffset));
   }
 
-  world.addChild(grid);
+  grid.forEach(g => world.addChild(g));
+
   app.value.stage.addChild(world);
 })
 onUnmounted(() => {
