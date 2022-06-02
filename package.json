@@ -17,7 +17,6 @@
     "clone": "^2.1.2",
     "deep-diff": "^1.0.2",
     "deepmerge": "^4.2.2",
-    "dompurify": "^2.2.9",
     "firebase": "^8.7.1",
     "pixi.js": "^6.3.2",
     "vue": "^3.0.5",
