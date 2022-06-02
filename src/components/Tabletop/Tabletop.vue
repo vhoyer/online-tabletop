@@ -8,9 +8,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, provide } from 'vue'
+import { ref, onMounted, onUnmounted, provide } from 'vue';
 import { xyAdd, xyNeg } from '@utils/coordinates';
-import * as PIXI from 'pixi.js'
+import { onlySelf } from '@utils/event';
+import '@pixi/events';
+import * as PIXI from 'pixi.js';
 
 const canvas = ref()
 const app = ref()
@@ -37,14 +39,16 @@ onMounted(() => {
     world.hitArea = new PIXI.Rectangle(-world.x, -world.y, app.value.screen.width, app.value.screen.height);
   }
   setHitAreaToView();
+  let isDragging = false;
   const moveStart = { x: 0 , y: 0 };
-  world.on('pointerdown', (e) => {
+  world.addEventListener('pointerdown', onlySelf((e) => {
     const screenPoint = xyAdd(xyNeg(world), e.data.global)
 
     Object.assign(moveStart, screenPoint);
-  });
-  world.on('pointermove', (e) => {
-    if (e.data.buttons <= 0) return;
+    isDragging = true;
+  }));
+  world.addEventListener('pointermove', onlySelf((e) => {
+    if (!isDragging) return;
 
     const screenPoint = xyAdd(xyNeg(world), e.data.global)
 
@@ -52,8 +56,10 @@ onMounted(() => {
     const moveDiff = xyAdd(xyNeg(moveStart), moveNow)
 
     Object.assign(world, xyAdd(world, moveDiff))
-  });
-  world.on('pointerup', setHitAreaToView);
+  }));
+  world.addEventListener('pointerup', onlySelf(setHitAreaToView));
+  const draggingOff = onlySelf(() => { isDragging = false });
+  world.addEventListener('pointerup', draggingOff);
 
   const gridRowSize = 2;
   const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
