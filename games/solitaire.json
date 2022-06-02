@@ -15,10 +15,10 @@
     "define object Deck deck",
     "for_in suit @next @next",
     [
-      ["♣", "000000"],
-      ["♦", "ff0000"],
-      ["♥", "ff0000"],
-      ["♠", "000000"]
+      ["♣", "black"],
+      ["♦", "red"],
+      ["♥", "red"],
+      ["♠", "black"]
     ],
     [
       "for_in number 1..10 @next",
