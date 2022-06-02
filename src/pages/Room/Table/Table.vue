@@ -11,7 +11,11 @@
 
   <div>
     <Tabletop>
-      <TabletopCard />
+      <TabletopCard
+        color="red"
+        main="♥J"
+        corner="♥J"
+      />
     </Tabletop>
   </div>
 </template>
