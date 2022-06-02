@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge'
-import DOMPurify from 'dompurify'
 import { shuffle } from '@utils/array'
+import { mapValues } from '@utils/object'
 
 const forwardActions = (self, entity, actionList) => {
   actionList.forEach(action => {
@@ -20,15 +20,14 @@ export const base = {
 
 export function Card(props = {}) {
   Object.assign(this, deepmerge({
-    template: '',
+    props: {},
     data: {},
-  }, props))
+  }, props));
 
-  this.rendered = DOMPurify.sanitize(
-    this.template.join('').replace(/\$\{\w+\}/g, (match) => {
-      return this.data[match.substring(2, match.length - 1)]
-    })
-  )
+  this.props = mapValues(this.props, (v) => v.replace(
+    /\$\{\w+\}/g,
+    (match) => this.data[match.substring(2, match.length - 1)],
+  ));
 
   this.createObject = (props) => {
     return new Card({

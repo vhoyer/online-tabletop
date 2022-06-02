@@ -5,22 +5,20 @@
   "create": [
     "define template Card card @next",
     {
-      "template": [
-        "<div style='color:${color}'>",
-          "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left;'>${value}</div>",
-          "<div style='font-size:2rem; font-weight:bold; position: absolute; inset: 8px; text-align: left; transform: rotate(180deg)'>${value}</div>",
-          "<div style='font-size:8rem; font-weight:bold'>${value}</div>",
-        "</div>"
-      ]
+      "props": {
+        "color": "${color}",
+        "main": "${value}",
+        "corner": "${value}"
+      }
     },
 
     "define object Deck deck",
     "for_in suit @next @next",
     [
-      ["♣", "black"],
-      ["♦", "red"],
-      ["♥", "red"],
-      ["♠", "black"]
+      ["♣", "000000"],
+      ["♦", "ff0000"],
+      ["♥", "ff0000"],
+      ["♠", "000000"]
     ],
     [
       "for_in number 1..10 @next",
