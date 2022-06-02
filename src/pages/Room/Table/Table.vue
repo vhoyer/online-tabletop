@@ -11,6 +11,7 @@
 
   <div>
     <Tabletop>
+      <TabletopCard />
     </Tabletop>
   </div>
 </template>
@@ -18,12 +19,14 @@
 <script>
 import Card from '@components/Card'
 import Tabletop from '@components/Tabletop'
+import TabletopCard from '@components/TabletopCard'
 
 export default {
   name: 'Table',
   components: {
     Card,
     Tabletop,
+    TabletopCard,
   },
   props: {
     room: {
