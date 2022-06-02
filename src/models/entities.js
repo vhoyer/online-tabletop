@@ -22,9 +22,10 @@ export function Card(props = {}) {
   Object.assign(this, deepmerge({
     props: {},
     data: {},
+    propsWithData: {},
   }, props));
 
-  this.props = mapValues(this.props, (v) => v.replace(
+  this.propsWithData = mapValues(this.props, (v) => v.replace(
     /\$\{\w+\}/g,
     (match) => this.data[match.substring(2, match.length - 1)],
   ));
