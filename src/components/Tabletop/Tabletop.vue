@@ -28,7 +28,7 @@ const COLOR_DARK_OLIVE_GREEN = 0x657153;
 // const COLOR_DARK_PURPLE = 0x3B1C32;
 
 onMounted(() => {
-  app.value = new PIXI.Application({
+  window.app = app.value = new PIXI.Application({
     view: canvas.value,
     resolution: window.devicePixelRatio ?? 1,
     resizeTo: window,
