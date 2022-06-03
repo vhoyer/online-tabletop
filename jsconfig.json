@@ -5,6 +5,7 @@
   "compilerOptions": {
     "baseUrl": "",
     "paths": {
+      "@_PIXI_plugins/*": ["src/_PIXI_plugins/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@models/*": ["src/models/*"],
