@@ -49,6 +49,7 @@ onMounted(() => {
       world.clear();
       world.lineStyle({ color: 0xff0000, width: 5, alignment: 0 })
       world.drawRect(...rect);
+      world.drawCircle(world.pivot.x, world.pivot.y, 15);
     }
   }
   setHitAreaToView();
