@@ -77,6 +77,7 @@ onMounted(() => {
     width: 1,
     color: COLOR_DARK_OLIVE_GREEN,
     alpha: 0.4,
+    native: true,
   }));
   for (const x in Array.from({ length: Math.ceil(xEnd / gridSize) })) {
     grid.forEach(g => g.moveTo(gridSize * (Number(x) + 1) - gridOffset, 0));
