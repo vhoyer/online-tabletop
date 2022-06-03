@@ -9,8 +9,9 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue';
-import { xyAdd, xyNeg } from '@utils/coordinates';
+import { xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, whtoxy, xytowh } from '@utils/coordinates';
 import { onlySelf } from '@utils/event';
+import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
 import * as PIXI from 'pixi.js';
 
@@ -34,11 +35,21 @@ onMounted(() => {
     backgroundColor: COLOR_TIMBERWOLF,
   })
 
-  const world = new PIXI.Container();
+  const world = new PIXI.Graphics();
   world.interactive = true;
 
   const setHitAreaToView = () => {
-    world.hitArea = new PIXI.Rectangle(-world.x, -world.y, app.value.screen.width, app.value.screen.height);
+    const { x, y } = xyDivide(xyNeg(world), world.scale)
+    const { width, height } = xytowh(xyDivide(whtoxy(app.value.screen), world.scale));
+
+    const rect = [x, y, width, height];
+
+    world.hitArea = new PIXI.Rectangle(...rect);
+    if (world instanceof PIXI.Graphics) {
+      world.clear();
+      world.lineStyle({ color: 0xff0000, width: 5, alignment: 0 })
+      world.drawRect(...rect);
+    }
   }
   setHitAreaToView();
   let isDragging = false;
@@ -57,11 +68,22 @@ onMounted(() => {
     const moveNow = screenPoint;
     const moveDiff = xyAdd(xyNeg(moveStart), moveNow)
 
-    Object.assign(world, xyAdd(world, moveDiff))
+    xySet(world, xyAdd(world, moveDiff))
   }));
   world.addEventListener('pointerup', onlySelf(setHitAreaToView));
   const draggingOff = onlySelf(() => { isDragging = false });
   world.addEventListener('pointerup', draggingOff);
+
+  world.interactiveMousewheel = true;
+  world.addEventListener('mousewheel', (direction, { x, y }) => {
+    xySet(world.scale, xyMultiply(world.scale, xySame(1 + direction * 0.1)));
+    xySet(world, xyAdd(world, (world, world.scale)));
+
+    const screenPoint = { x, y };
+    console.log(screenPoint)
+
+    setHitAreaToView()
+  });
 
   const gridRowSize = 2;
   const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
