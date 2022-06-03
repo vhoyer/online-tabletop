@@ -14,6 +14,8 @@ import { onlySelf } from '@utils/event';
 import '@pixi/events';
 import * as PIXI from 'pixi.js';
 
+window.PIXI = PIXI;
+
 const canvas = ref()
 const app = ref()
 const worldRef = ref()
