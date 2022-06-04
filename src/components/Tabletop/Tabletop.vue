@@ -81,8 +81,17 @@ onMounted(() => {
     xySet(world.scale, xyMultiply(world.scale, xySame(1 + direction * 0.1)));
     xySet(world, xyAdd(world, (world, world.scale)));
 
-    const screenPoint = { x, y };
-    console.log(screenPoint);
+    // center zoom on mouse position
+    const getWorldPositionRelativeToMouse = () => {
+      const { getLocalPosition } = PIXI.InteractionData.prototype;
+      const mouseClickAsObject = { global: { x, y } };
+      return getLocalPosition.call(mouseClickAsObject, world);
+    };
+    const before = getWorldPositionRelativeToMouse();
+    world.updateTransform();
+    const after = getWorldPositionRelativeToMouse();
+    xySet(world, xyAdd(world, xyMultiply(xyAdd(after, xyNeg(before)), world.scale)));
+    world.updateTransform(); // this avoid bug when multiple calls are made sequentially
 
     setHitAreaToView();
   });
