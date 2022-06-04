@@ -45,7 +45,9 @@ module.exports = {
     'no-fallthrough': 'off',
     'no-eval': 'error',
     'no-caller': 'error',
-    'no-console': 'warn',
+    'no-console': ['warn', {
+      allow: ['info', 'warn', 'error', 'groupCollapsed', 'group', 'groupEnd'],
+    }],
     'no-debugger': 'warn',
     'no-bitwise': 'error',
     'no-duplicate-imports': ['error'],
@@ -88,6 +90,7 @@ module.exports = {
       'error',
       {
         'vars': 'all',
+        'varsIgnorePattern': '^_',
         'args': 'all',
         'argsIgnorePattern': '^_',
         'ignoreRestSiblings': true,
@@ -114,4 +117,4 @@ module.exports = {
       fit: 'readonly',
     },
   }],
-}
+};

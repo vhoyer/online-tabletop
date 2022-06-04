@@ -1,8 +1,8 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import { router } from './router.js'
-import './main.scss'
+import { createApp } from 'vue';
+import App from './App.vue';
+import { router } from './router.js';
+import './main.scss';
 
 createApp(App)
   .use(router)
-  .mount('#app')
+  .mount('#app');

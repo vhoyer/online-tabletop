@@ -1,1 +1,1 @@
-export { default } from './MyHand.vue'
+export { default } from './MyHand.vue';

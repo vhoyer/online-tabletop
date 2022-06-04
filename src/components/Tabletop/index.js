@@ -1,1 +1,1 @@
-export { default } from './Tabletop.vue'
+export { default } from './Tabletop.vue';

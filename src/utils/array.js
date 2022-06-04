@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/2450976/5379222
 export const shuffle = (array) => {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+  let currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
   while (0 !== currentIndex) {
@@ -16,4 +16,4 @@ export const shuffle = (array) => {
   }
 
   return array;
-}
+};

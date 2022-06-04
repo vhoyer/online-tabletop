@@ -5,13 +5,13 @@ export const mapEntries = (object, transformer) => {
 
   return Object.fromEntries(
     Object.entries(object)
-      .map(transformer)
-  )
-}
+      .map(transformer),
+  );
+};
 
 export const mapValues = (object, transformer) => {
-  return mapEntries(object, ([key, value]) => [key, transformer(value)])
-}
+  return mapEntries(object, ([key, value]) => [key, transformer(value)]);
+};
 
 export const executeOnEntries = (original, transformerList = []) => {
   return Object.fromEntries(
@@ -19,8 +19,8 @@ export const executeOnEntries = (original, transformerList = []) => {
       (entries, transformer) => transformer(entries),
       Object.entries(original),
     ),
-  )
-}
+  );
+};
 
 export const set = (original, name, value) => {
   const object = clone(original);

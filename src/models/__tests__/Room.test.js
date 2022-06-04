@@ -1,4 +1,4 @@
-import { Room } from '@models/Room'
+import { Room } from '@models/Room';
 
 const utils = {
   userRemove: expect.any(Function),
@@ -6,73 +6,73 @@ const utils = {
   gameSet: expect.any(Function),
   toPlainObject: expect.any(Function),
   copy: expect.any(Function),
-}
+};
 
 describe('Models > Room', () => {
-  def('subject', () => new Room($.base))
+  def('subject', () => new Room($.base));
 
   it('initiates as an empty room', () => {
     expect($.subject).toEqual({
       ...utils,
       users: {},
       game: null,
-    })
-  })
+    });
+  });
 
   describe('when passing a onUpdate listener as second argument', () => {
     def('events', () => ({
       onUpdate: jest.fn(),
-    }))
+    }));
 
-    def('subject', () => new Room($.base, $.events))
+    def('subject', () => new Room($.base, $.events));
 
     describe('when calls userAdd', () => {
-      let old
+      let old;
 
       beforeEach(() => {
-        old = $.subject.toPlainObject()
+        old = $.subject.toPlainObject();
 
-        $.subject.userAdd('o_mago')
-      })
+        $.subject.userAdd('o_mago');
+      });
 
       it('calls onUpdate event', () => {
-        expect($.events.onUpdate).toHaveBeenCalledTimes(1)
-        expect($.events.onUpdate).toHaveBeenNthCalledWith(1, $.subject, old)
-      })
-    })
+        expect($.events.onUpdate).toHaveBeenCalledTimes(1);
+        expect($.events.onUpdate).toHaveBeenNthCalledWith(1, $.subject, old);
+      });
+    });
 
     describe('when calls copy', () => {
       beforeEach(() => {
-        $.subject.copy()
-      })
+        $.subject.copy();
+      });
 
       it('doesn\'t call onUpdate event', () => {
-        expect($.events.onUpdate).toHaveBeenCalledTimes(0)
-      })
-    })
-  })
+        expect($.events.onUpdate).toHaveBeenCalledTimes(0);
+      });
+    });
+  });
 
   describe('when call toPlainObject', () => {
     it('removes all functions', () => {
       expect($.subject.toPlainObject()).toEqual({
         users: {},
         game: null,
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('when call userAdd with "" (Empty string)', () => {
     it('initiates as a empty room', () => {
       expect(() => {
-        $.subject.userAdd('')
-      }).toThrow(new Error("User can't have empty username"))
-    })
-  })
+        $.subject.userAdd('');
+      }).toThrow(new Error("User can't have empty username"));
+    });
+  });
 
   describe('when call userAdd with "o_mago"', () => {
     beforeEach(() => {
-      $.subject.userAdd('o_mago')
-    })
+      $.subject.userAdd('o_mago');
+    });
 
     it('add first user as host', () => {
       expect($.subject).toEqual({
@@ -84,13 +84,13 @@ describe('Models > Room', () => {
           },
         },
         game: null,
-      })
-    })
+      });
+    });
 
     describe('when call userAdd with "bolinha_gamer"', () => {
       beforeEach(() => {
-        $.subject.userAdd('bolinha_gamer')
-      })
+        $.subject.userAdd('bolinha_gamer');
+      });
 
       it('Add new user as player', () => {
         expect($.subject).toEqual({
@@ -106,13 +106,13 @@ describe('Models > Room', () => {
             },
           },
           game: null,
-        })
-      })
+        });
+      });
 
       describe('when call userRemove("o_mago")', () => {
         beforeEach(() => {
-          $.subject.userRemove('o_mago')
-        })
+          $.subject.userRemove('o_mago');
+        });
 
         it('appoints the oldest user the new host', () => {
           expect($.subject.users).toEqual({
@@ -120,14 +120,14 @@ describe('Models > Room', () => {
               enteredAt: expect.any(Date),
               type: 'host',
             },
-          })
-        })
-      })
+          });
+        });
+      });
 
       describe('when call userRemove("bolinha_gamer")', () => {
         beforeEach(() => {
-          $.subject.userRemove('bolinha_gamer')
-        })
+          $.subject.userRemove('bolinha_gamer');
+        });
 
         it('removes the user', () => {
           expect($.subject.users).toEqual({
@@ -135,21 +135,21 @@ describe('Models > Room', () => {
               enteredAt: expect.any(Date),
               type: 'host',
             },
-          })
-        })
-      })
+          });
+        });
+      });
 
       describe('when call copy', () => {
         it('creates a copy of the current Room', () => {
-          expect($.subject).toBe($.subject)
-          expect($.subject.copy()).not.toBe($.subject)
-        })
-      })
+          expect($.subject).toBe($.subject);
+          expect($.subject.copy()).not.toBe($.subject);
+        });
+      });
 
       describe('when call toPlainObject', () => {
-        const regexTimestamp = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+        const regexTimestamp = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/;
 
-        def('plainObject', () => $.subject.toPlainObject())
+        def('plainObject', () => $.subject.toPlainObject());
 
         it('serializes the user correctly', () => {
           expect($.plainObject).toEqual({
@@ -164,8 +164,8 @@ describe('Models > Room', () => {
               },
             },
             game: null,
-          })
-        })
+          });
+        });
 
         describe('when creating another Room from plain object', () => {
           it('creates Date objects for "enteredAt"', () => {
@@ -182,18 +182,18 @@ describe('Models > Room', () => {
                 },
               },
               game: null,
-            })
-          })
-        })
-      })
-    })
+            });
+          });
+        });
+      });
+    });
 
     describe('when call userAdd with "o_mago"', () => {
       it('initiates as a empty room', () => {
         expect(() => {
-          $.subject.userAdd('o_mago')
-        }).toThrow(new Error('User already exists in the room'))
-      })
-    })
-  })
-})
+          $.subject.userAdd('o_mago');
+        }).toThrow(new Error('User already exists in the room'));
+      });
+    });
+  });
+});

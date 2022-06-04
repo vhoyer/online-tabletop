@@ -5,12 +5,12 @@ class MousewheelPlugin {
   constructor(app) {
     this.app = app;
 
-    this.eventHandler = (e) => this.onMouseWheel(e);
-    this.app.view.addEventListener('wheel',this.eventHandler, { passive: false });
+    this.eventHandler = e => this.onMouseWheel(e);
+    this.app.view.addEventListener('wheel', this.eventHandler, { passive: false });
   }
 
   onMouseWheel(e) {
-    let target = this.findScrollTarget({x:e.offsetX,y:e.offsetY});
+    const target = this.findScrollTarget({ x: e.offsetX, y: e.offsetY });
 
     if (target) {
       e.preventDefault();
@@ -19,7 +19,7 @@ class MousewheelPlugin {
   }
 
   findScrollTarget(pos) {
-    let hit = this.app.renderer.plugins.interaction.hitTest(pos);
+    const hit = this.app.renderer.plugins.interaction.hitTest(pos);
 
     if (hit && hit.interactiveMousewheel) return hit;
   }
@@ -28,16 +28,16 @@ class MousewheelPlugin {
     if (e.detail) {
       if (e.wheelDelta) {
         return e.wheelDelta / e.detail / 40 * (e.detail > 0 ? 1 : -1); // Opera
-      } else {
-        return -e.detail / 3; // Firefox
       }
-    } else {
-      return e.wheelDelta / 120; // IE,Safari,Chrome
+      return -e.detail / 3; // Firefox
+
     }
+    return e.wheelDelta / 120; // IE,Safari,Chrome
+
   }
 
-  destroy(){
-    this.app.view.removeEventListener('wheel',this.eventHandler);
+  destroy() {
+    this.app.view.removeEventListener('wheel', this.eventHandler);
   }
 }
 
@@ -52,15 +52,15 @@ if (!PIXI.DisplayObject.prototype.interactiveMousewheel) {
       if (enabled && !this.interactive) {
         this.interactive = true;
       }
-    }
+    },
   });
 
   PIXI.Application.registerPlugin({
     init(_options) {
-      this._mousewheelPlugin = new MousewheelPlugin(this)
+      this._mousewheelPlugin = new MousewheelPlugin(this);
     },
     destroy() {
-      this._mousewheelPlugin.destroy()
+      this._mousewheelPlugin.destroy();
     },
   });
 }
