@@ -82,6 +82,7 @@ onMounted(() => {
     xySet(world, xyAdd(world, (world, world.scale)));
 
     // center zoom on mouse position
+    // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
     const getWorldPositionRelativeToMouse = () => {
       const { getLocalPosition } = PIXI.InteractionData.prototype;
       const mouseClickAsObject = { global: { x, y } };
