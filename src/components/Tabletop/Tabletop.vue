@@ -9,7 +9,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue';
-import { xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, whtoxy, xytowh } from '@utils/coordinates';
+import { xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, xyMin, xyMax, whtoxy, xytowh } from '@utils/coordinates';
 import { onlySelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
@@ -78,8 +78,12 @@ onMounted(() => {
 
   world.interactiveMousewheel = true;
   world.addEventListener('mousewheel', (direction, { x, y }) => {
-    xySet(world.scale, xyMultiply(world.scale, xySame(1 + direction * 0.1)));
-    xySet(world, xyAdd(world, (world, world.scale)));
+    const maxZoom = xySame(3);
+    const minZoom = xySame(0.15);
+    const newScale = xyMultiply(world.scale, xySame(1 + direction * 0.1));
+    const newScaleBottomAndTopCapped = xyMin(maxZoom, xyMax(minZoom, newScale));
+
+    xySet(world.scale, newScaleBottomAndTopCapped);
 
     // center zoom on mouse position
     // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
