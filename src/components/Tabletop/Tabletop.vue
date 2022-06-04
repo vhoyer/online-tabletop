@@ -17,9 +17,9 @@ import * as PIXI from 'pixi.js';
 
 window.PIXI = PIXI;
 
-const canvas = ref()
-const app = ref()
-const worldRef = ref()
+const canvas = ref();
+const app = ref();
+const worldRef = ref();
 
 // const COLOR_FLAME = 0xE55934;
 const COLOR_TIMBERWOLF = 0xD8DAD3;
@@ -33,13 +33,13 @@ onMounted(() => {
     resolution: window.devicePixelRatio ?? 1,
     resizeTo: window,
     backgroundColor: COLOR_TIMBERWOLF,
-  })
+  });
 
   const world = new PIXI.Graphics();
   world.interactive = true;
 
   const setHitAreaToView = () => {
-    const { x, y } = xyDivide(xyNeg(world), world.scale)
+    const { x, y } = xyDivide(xyNeg(world), world.scale);
     const { width, height } = xytowh(xyDivide(whtoxy(app.value.screen), world.scale));
 
     const rect = [x, y, width, height];
@@ -47,16 +47,16 @@ onMounted(() => {
     world.hitArea = new PIXI.Rectangle(...rect);
     if (world instanceof PIXI.Graphics) {
       world.clear();
-      world.lineStyle({ color: 0xff0000, width: 5, alignment: 0 })
+      world.lineStyle({ color: 0xff0000, width: 5, alignment: 0 });
       world.drawRect(...rect);
       world.drawCircle(world.pivot.x, world.pivot.y, 15);
     }
-  }
+  };
   setHitAreaToView();
   let isDragging = false;
-  const moveStart = { x: 0 , y: 0 };
+  const moveStart = { x: 0, y: 0 };
   world.addEventListener('pointerdown', onlySelf((e) => {
-    const screenPoint = xyAdd(xyNeg(world), e.data.global)
+    const screenPoint = xyAdd(xyNeg(world), e.data.global);
 
     Object.assign(moveStart, screenPoint);
     isDragging = true;
@@ -64,16 +64,17 @@ onMounted(() => {
   world.addEventListener('pointermove', onlySelf((e) => {
     if (!isDragging) return;
 
-    const screenPoint = xyAdd(xyNeg(world), e.data.global)
+    const screenPoint = xyAdd(xyNeg(world), e.data.global);
 
     const moveNow = screenPoint;
-    const moveDiff = xyAdd(xyNeg(moveStart), moveNow)
+    const moveDiff = xyAdd(xyNeg(moveStart), moveNow);
 
-    xySet(world, xyAdd(world, moveDiff))
+    xySet(world, xyAdd(world, moveDiff));
   }));
-  world.addEventListener('pointerup', onlySelf(setHitAreaToView));
-  const draggingOff = onlySelf(() => { isDragging = false });
-  world.addEventListener('pointerup', draggingOff);
+  world.addEventListener('pointerup', onlySelf(() => {
+    setHitAreaToView();
+    isDragging = false;
+  }));
 
   world.interactiveMousewheel = true;
   world.addEventListener('mousewheel', (direction, { x, y }) => {
@@ -81,9 +82,9 @@ onMounted(() => {
     xySet(world, xyAdd(world, (world, world.scale)));
 
     const screenPoint = { x, y };
-    console.log(screenPoint)
+    console.log(screenPoint);
 
-    setHitAreaToView()
+    setHitAreaToView();
   });
 
   const gridRowSize = 2;
@@ -91,12 +92,12 @@ onMounted(() => {
 
   const gridSize = 100;
   const gridOffset = gridSize / 2;
-  const xEnd = (Math.ceil((app.value.screen.width  - gridOffset) / gridSize) + 1) * gridSize;
+  const xEnd = (Math.ceil((app.value.screen.width - gridOffset) / gridSize) + 1) * gridSize;
   const yEnd = (Math.ceil((app.value.screen.height - gridOffset) / gridSize) + 1) * gridSize;
 
   // reposition
   grid.forEach((g, index) => g.x = (xEnd * (index % gridRowSize)));
-  grid.forEach((g, index) => g.y = (yEnd * Math.floor(index / gridRowSize)));;
+  grid.forEach((g, index) => g.y = (yEnd * Math.floor(index / gridRowSize)));
 
   grid.forEach(g => g.lineStyle({
     width: 1,
@@ -109,31 +110,31 @@ onMounted(() => {
     grid.forEach(g => g.lineTo(gridSize * (Number(x) + 1) - gridOffset, yEnd));
   }
   for (const y in Array.from({ length: Math.ceil(yEnd / gridSize) })) {
-    grid.forEach(g => g.moveTo(0,    gridSize * (Number(y) + 1) - gridOffset));
+    grid.forEach(g => g.moveTo(0, gridSize * (Number(y) + 1) - gridOffset));
     grid.forEach(g => g.lineTo(xEnd, gridSize * (Number(y) + 1) - gridOffset));
   }
 
   grid.forEach((g, index) => app.value.ticker.add(() => {
-    g.x = xEnd * (Math.floor(-world.x / xEnd) + (index % gridRowSize))
-    g.y = yEnd * (Math.floor(-world.y / yEnd) + Math.floor(index / gridRowSize))
-  }))
+    g.x = xEnd * (Math.floor(-world.x / xEnd) + (index % gridRowSize));
+    g.y = yEnd * (Math.floor(-world.y / yEnd) + Math.floor(index / gridRowSize));
+  }));
 
   grid.forEach(g => world.addChild(g));
   worldRef.value = world;
   window.world = world;
 
   app.value.stage.addChild(world);
-})
+});
 onUnmounted(() => {
   app.value.destroy(false, {
     children: true,
     texture: true,
     baseTexture: true,
-  })
-})
+  });
+});
 
-provide('tabletopApplication', app)
-provide('tabletop', worldRef)
+provide('tabletopApplication', app);
+provide('tabletop', worldRef);
 </script>
 
 <style>
