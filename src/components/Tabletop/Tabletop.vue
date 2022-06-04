@@ -35,7 +35,7 @@ onMounted(() => {
     backgroundColor: COLOR_TIMBERWOLF,
   });
 
-  const world = new PIXI.Graphics();
+  const world = new PIXI.Container();
   world.interactive = true;
 
   const setHitAreaToView = () => {
