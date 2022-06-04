@@ -7,7 +7,7 @@ module.exports = {
     'plugin:vue/vue3-recommended',
   ],
   rules: {
-    'semi': ['error', 'never'],
+    'semi': ['error', 'always'],
     'quotes': ['error', 'single', { avoidEscape: true }],
     'comma-dangle': ['error', 'always-multiline'],
     'indent': ['error', 2],
