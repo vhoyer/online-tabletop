@@ -9,7 +9,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue';
-import { xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, xyMin, xyMax, whtoxy, xytowh } from '@utils/coordinates';
+import {
+  xyCenter, xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, xyMin, xyMax,
+  whtoxy, xytowh,
+} from '@utils/coordinates';
 import { onlySelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
@@ -76,8 +79,7 @@ onMounted(() => {
     isDragging = false;
   }));
 
-  world.interactiveMousewheel = true;
-  world.addEventListener('mousewheel', (direction, { x, y }) => {
+  const onZoomRequest = window.onZoomRequest = (direction, { x, y } = xyCenter(app.value.screen)) => {
     const maxZoom = xySame(3);
     const minZoom = xySame(0.15);
     const newScale = xyMultiply(world.scale, xySame(1 + direction * 0.1));
@@ -99,7 +101,10 @@ onMounted(() => {
     world.updateTransform(); // this avoid bug when multiple calls are made sequentially
 
     setHitAreaToView();
-  });
+  };
+
+  world.interactiveMousewheel = true;
+  world.addEventListener('mousewheel', onZoomRequest);
 
   const gridRowSize = 2;
   const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
