@@ -13,7 +13,6 @@ import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
   whtoxy, xytowh, xyIncrement, xyCentroid, xyDistanceSquared, xyApply,
 } from '@utils/coordinates';
-import { mapValues } from '@utils/object';
 import { onlySelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
@@ -42,7 +41,7 @@ onMounted(() => {
   const world = worldRef.value = window.world = new PIXI.Container();
   world.interactive = true;
 
-  const setHitAreaToView = () => {
+  const setHitAreaToView = window.setHitAreaToView = () => {
     const { x, y } = xyDivide(xyNeg(world), world.scale);
     const { width, height } = xytowh(xyDivide(whtoxy(app.value.screen), world.scale));
 
@@ -58,34 +57,60 @@ onMounted(() => {
   };
   setHitAreaToView();
 
-  const pointerList = {};
+  const setZoomScaleCenteredAt = window.setZoomScaleCenteredAt = (newScale, { x, y } = xyCenter(app.value.screen)) => {
+    const maxZoom = xySame(3);
+    const minZoom = xySame(0.15);
+    const newScaleBottomAndTopCapped = xyMin(maxZoom, xyMax(minZoom, newScale));
+
+    xySet(world.scale, newScaleBottomAndTopCapped);
+
+    // center zoom on mouse position
+    // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
+    const getWorldPositionRelativeToCenter = () => {
+      const { getLocalPosition } = PIXI.InteractionData.prototype;
+      const mouseClickAsObject = { global: { x, y } };
+      return getLocalPosition.call(mouseClickAsObject, world);
+    };
+    const before = getWorldPositionRelativeToCenter();
+    world.updateTransform();
+    const after = getWorldPositionRelativeToCenter();
+    xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
+    world.updateTransform(); // this avoid bug when multiple calls are made sequentially
+
+    setHitAreaToView();
+  };
+
+  const pointerList = window.pointerList = {};
   world.addEventListener('pointerdown', onlySelf((e) => {
     pointerList[e.data.pointerId] = {
-      lastEvent: e,
+      id: e.data.pointerId,
       downAt: xyAdd(xyNeg(world), e.data.global),
       isDragging: true,
       isPinching: false,
     };
 
-    const isDraggingList = Object.values(pointerList).map(i => i.isDragging);
-    const countTrue = isDraggingList.reduce((count, bool) => count + Number(bool), 0);
-    if (countTrue === 2) {
-      // if more than one try dragging, no one is dragging
-      Object.assign(pointerList, mapValues(pointerList,
-        v => Object.assign(v, {
-          isDragging: false,
-          isPinching: true,
-          pair: Object.values(pointerList).filter(p => p !== v)[0],
-        }),
-      ));
+    const activePointerList = Object.values(pointerList).filter(p => Boolean(p.downAt));
+    if (activePointerList.length === 2) {
+      // if more than one is active, it's not a drag, it's a pinch
+      const [{ id: idMain }, { id: idPair }] = activePointerList;
+
+      Object.assign(pointerList[idMain], {
+        isDragging: false,
+        isPinching: true,
+        startScale: world.scale.x,
+        pair: pointerList[idPair],
+      });
+      Object.assign(pointerList[idPair], {
+        isDragging: false,
+        isPinching: false,
+        pair: pointerList[idMain],
+      });
     }
   }));
   world.addEventListener('pointermove', onlySelf((e) => {
-    pointerList[e.data.pointerId] = {
-      ...pointerList[e.data.pointerId],
-      lastEvent: e,
+    Object.assign(pointerList[e.data.pointerId], {
       moveAt: xyAdd(xyNeg(world), e.data.global),
-    };
+    });
 
     const {
       isDragging,
@@ -100,12 +125,15 @@ onMounted(() => {
     }
 
     if (isPinching) {
-      const {
-        downAt: d1, moveAt: m1,
-        pair: { downAt: d2, moveAt: m2 },
-      } = pointerList[e.data.pointerId];
+      const { downAt: d1, moveAt: m1, startScale, pair } = pointerList[e.data.pointerId];
+      const { downAt: d2, moveAt: m2 } = pair;
 
       if (!m2) return;
+
+      const distanceStart = Math.sqrt(xyDistanceSquared(d1, d2));
+      const distanceNow = Math.sqrt(xyDistanceSquared(m1, m2));
+      const newScale = window.newScale = (startScale * distanceNow) / distanceStart;
+      setZoomScaleCenteredAt(xySame(newScale));
 
       const originalMidpoint = xyCentroid(d1, d2);
       const currentMidpoint = xyCentroid(m1, m2);
@@ -113,60 +141,31 @@ onMounted(() => {
       xyIncrement(world, moveDiff);
       world.updateTransform();
 
-      const distanceStart = xyDistanceSquared(d1, d2);
-      const distanceNow = xyDistanceSquared(m1, m2);
-      const direction = distanceNow > distanceStart ? 1 : -1;
-
-      onZoomRequest(direction);
-
       return;
     }
   }));
   world.addEventListener('pointerup', onlySelf((e) => {
-    const { isPinching } = pointerList[e.data.pointerId];
-    if (isPinching) {
+    const { isPinching, pair } = pointerList[e.data.pointerId];
+    if (!isPinching && Boolean(pair)) {
       // if one stops pinching, no one is pinching
-      Object.assign(pointerList, mapValues(pointerList,
-        v => Object.assign(v, {
-          isPinching: false,
-        }),
-      ));
+      Object.assign(pair, {
+        isPinching: false,
+      });
     }
 
     pointerList[e.data.pointerId] = {
-      lastEvent: e,
       isDragging: false,
       isPinching: false,
     };
     setHitAreaToView();
   }));
 
-  const onZoomRequest = window.onZoomRequest = (direction, { x, y } = xyCenter(app.value.screen)) => {
-    const maxZoom = xySame(3);
-    const minZoom = xySame(0.15);
-    const newScale = xyTimes(world.scale, xySame(1 + direction * 0.1));
-    const newScaleBottomAndTopCapped = xyMin(maxZoom, xyMax(minZoom, newScale));
-
-    xySet(world.scale, newScaleBottomAndTopCapped);
-
-    // center zoom on mouse position
-    // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
-    const getWorldPositionRelativeToMouse = () => {
-      const { getLocalPosition } = PIXI.InteractionData.prototype;
-      const mouseClickAsObject = { global: { x, y } };
-      return getLocalPosition.call(mouseClickAsObject, world);
-    };
-    const before = getWorldPositionRelativeToMouse();
-    world.updateTransform();
-    const after = getWorldPositionRelativeToMouse();
-    xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
-    world.updateTransform(); // this avoid bug when multiple calls are made sequentially
-
-    setHitAreaToView();
-  };
-
   world.interactiveMousewheel = true;
-  world.addEventListener('mousewheel', onZoomRequest);
+  world.addEventListener('mousewheel', (direction, { x, y }) => {
+    const newScale = xyTimes(world.scale, xySame(1 + direction * 0.1));
+
+    setZoomScaleCenteredAt(newScale, { x, y });
+  });
 
   const gridRowSize = 2;
   const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
