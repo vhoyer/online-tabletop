@@ -13,6 +13,7 @@ import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
   whtoxy, xytowh, xyIncrement,
 } from '@utils/coordinates';
+import { mapValues } from '@utils/object';
 import { onlySelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
@@ -70,9 +71,10 @@ onMounted(() => {
     const countTrue = isDraggingList.reduce((count, bool) => count + Number(bool), 0);
     if (countTrue > 1) {
       // if more than one try dragging, no one is dragging
-      pointerList.forEach((v) => {
-        v.isDragging = false;
-      });
+      Object.assign(pointerList, mapValues(
+        pointerList,
+        v => Object.assign(v, { isDragging: false }),
+      ));
     }
   }));
   world.addEventListener('pointermove', onlySelf((e) => {
