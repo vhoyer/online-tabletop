@@ -2,17 +2,29 @@
   <section>
     <h2>game info</h2>
 
-    <input type="file" @change="onGameChange" accept="application/json">
+    <input
+      type="file"
+      accept="application/json"
+      @change="onGameChange"
+    >
 
     <div>
       Selected game: {{ room.game?.name ?? 'None' }}
     </div>
 
     <fieldset v-if="Boolean(room.game?.config)">
-      <template :key="name" v-for="(options, name) in room.game.config">
+      <template
+        v-for="(options, name) in room.game.config"
+        :key="name"
+      >
         <label :for="name">{{ name }}</label>
         <br>
-        <textarea :id="name" cols="100" rows="10" v-model="options.editableValue" />
+        <textarea
+          :id="name"
+          v-model="options.editableValue"
+          cols="100"
+          rows="10"
+        />
       </template>
     </fieldset>
 
@@ -20,7 +32,7 @@
       v-if="Boolean(room.game)"
       :to="{ name: 'table', params: $route.params }"
     >
-      Play {{ room.game.name  }}
+      Play {{ room.game.name }}
     </router-link>
   </section>
 
@@ -52,32 +64,31 @@ export default {
       const { target: { files } } = event;
 
       if (files.length === 0) {
-        props.room.gameSet(null)
+        props.room.gameSet(null);
         console.error('[APP] No file selected', files, event);
-        return
+        return;
       }
 
       const reader = new FileReader();
 
       reader.onload = ({ target: { result: fileContent } }) => {
         try {
-          const gameRaw = JSON.parse(fileContent)
-          console.info('[APP] file read, add game to room', gameRaw)
+          const gameRaw = JSON.parse(fileContent);
+          console.info('[APP] file read, add game to room', gameRaw);
 
-          props.room.gameSet(gameRaw)
+          props.room.gameSet(gameRaw);
         } catch (error) {
-          console.error('[APP] error parsing game file:', error)
+          console.error('[APP] error parsing game file:', error);
         }
-      }
+      };
 
-      console.info('[APP] begin reading files[0]', reader)
-      reader.readAsText(files[0])
-    }
+      console.info('[APP] begin reading files[0]', reader);
+      reader.readAsText(files[0]);
+    };
 
     return {
-      room: props.room,
       onGameChange,
-    }
+    };
   },
 };
 </script>

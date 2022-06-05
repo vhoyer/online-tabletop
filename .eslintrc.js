@@ -98,6 +98,12 @@ module.exports = {
     ],
   },
   overrides: [{
+    files: ['**/*.vue'],
+    globals: {
+      defineProps: 'readonly',
+      defineEmits: 'readonly',
+    },
+  }, {
     files: ['jest*.js', '**/*.test.js', '**/__mocks__/*', 'test/**'],
     env: {
       jest: true,

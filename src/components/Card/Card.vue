@@ -1,11 +1,12 @@
 <template>
   <div class="card">
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="html" />
   </div>
 </template>
 
 <script>
-import { Card } from '@models/entities'
+import { Card } from '@models/entities';
 
 export default {
   name: 'Card',
@@ -18,9 +19,9 @@ export default {
   setup(props) {
     return {
       html: props.card.rendered,
-    }
+    };
   },
-}
+};
 </script>
 
 <style>

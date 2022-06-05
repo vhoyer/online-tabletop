@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import { Room } from '@models/Room'
-import { roomCreate } from '@services/rooms'
-import { useRouter } from 'vue-router'
-import UserSetup from '@components/UserSetup'
+import { Room } from '@models/Room';
+import { roomCreate } from '@services/rooms';
+import { useRouter } from 'vue-router';
+import UserSetup from '@components/UserSetup';
 
 export default {
   name: 'Home',
@@ -14,23 +14,23 @@ export default {
     UserSetup,
   },
   setup() {
-    const router = useRouter()
+    const router = useRouter();
 
     const goToRoom = async (user) => {
-      const room = new Room()
-      room.userAdd(user.name)
+      const room = new Room();
+      room.userAdd(user.name);
 
-      const { key } = await roomCreate(room)
+      const { key } = await roomCreate(room);
 
       router.push({
         name: 'room',
         params: { key },
-      })
-    }
+      });
+    };
 
     return {
       goToRoom,
-    }
+    };
   },
-}
+};
 </script>

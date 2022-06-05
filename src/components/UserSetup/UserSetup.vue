@@ -11,14 +11,14 @@
 </template>
 
 <script setup>
-import { user } from '@store/user'
+import { user } from '@store/user';
 
 const emit = defineEmits([
   'submit',
-])
+]);
 
 const onSubmit = () => {
-  user.hasLoggedIn = true
-  emit('submit', user)
-}
+  user.hasLoggedIn = true;
+  emit('submit', user);
+};
 </script>

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "lint": "eslint --ext .js,.vue --fix ./src",
     "dev": "vite --host --port 3123",
     "build": "vite build",
     "serve": "vite preview"

@@ -1,10 +1,10 @@
-<template>
-</template>
+<!-- eslint-disable-next-line vue/valid-template-root -->
+<template />
 
 <script setup>
 import { inject, watch, onUnmounted } from 'vue';
 import { xySame, xySet, xyCenter } from '@utils/coordinates';
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js';
 
 const props = defineProps({
   color: {
@@ -19,7 +19,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-})
+});
 
 const phi = 1.618033988749895;
 const width = 250;
@@ -66,7 +66,7 @@ if (props.corner) {
     xySet(text, xySame(padding));
     frame.addChild(text);
     return frame;
-  }
+  };
 
   const cornerText1 = cornerTextBuild();
   const cornerText2 = cornerTextBuild();
@@ -89,6 +89,7 @@ watch(tabletop, (tabletop) => {
 }, { immediate: true });
 
 onUnmounted(() => {
+  if (tabletop === undefined) return;
   tabletop.value.removeChild(card);
   card.destroy();
 });

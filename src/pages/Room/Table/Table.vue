@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import Card from '@components/Card'
-import Tabletop from '@components/Tabletop'
-import TabletopCard from '@components/TabletopCard'
+import Card from '@components/Card';
+import Tabletop from '@components/Tabletop';
+import TabletopCard from '@components/TabletopCard';
 
 export default {
   name: 'Table',
@@ -39,16 +39,16 @@ export default {
     },
   },
   setup(props) {
-    props.room.tableCreate()
+    props.room.tableCreate();
 
-    console.log('[debug][table]', props.room.table)
+    console.info('[debug][table]', props.room.table);
 
-    props.room.tableSetup()
+    props.room.tableSetup();
 
     return {
       table: props.room.table,
       tableRaw: JSON.stringify(props.room.table, null, 2),
-    }
+    };
   },
 };
 </script>

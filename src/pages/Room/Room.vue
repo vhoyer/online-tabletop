@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import { onUnmounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { roomSubscribe } from '@services/rooms'
-import { user } from '@store/user'
-import UserSetup from '@components/UserSetup'
+import { onUnmounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { roomSubscribe } from '@services/rooms';
+import { user } from '@store/user';
+import UserSetup from '@components/UserSetup';
 
 export default {
   name: 'Room',
@@ -29,35 +29,35 @@ export default {
     UserSetup,
   },
   setup() {
-    const router = useRouter()
-    const { key } = useRoute().params
+    const router = useRouter();
+    const { key } = useRoute().params;
 
-    const room = ref(null)
-    const isLoading = ref(true)
-    const unsubscribe = ref(null)
+    const room = ref(null);
+    const isLoading = ref(true);
+    const unsubscribe = ref(null);
     watch(() => user, (user) => {
-      unsubscribe.value?.()
+      unsubscribe.value?.();
 
       unsubscribe.value = roomSubscribe(key, user.name, (data) => {
-        room.value = data
+        room.value = data;
 
-        isLoading.value = false
+        isLoading.value = false;
       }, () => {
-        router.push({ name: 'home' })
-      })
-    }, { deep: true, immediate: true })
-    onUnmounted(() => unsubscribe.value?.())
+        router.push({ name: 'home' });
+      });
+    }, { deep: true, immediate: true });
+    onUnmounted(() => unsubscribe.value?.());
 
     const onUserCreate = () => {
-      room.value.userAdd(user.name)
-    }
+      room.value.userAdd(user.name);
+    };
 
     return {
       isLoading,
       room,
       user,
       onUserCreate,
-    }
+    };
   },
-}
+};
 </script>
