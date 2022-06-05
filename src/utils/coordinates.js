@@ -20,3 +20,8 @@ export const xytowh = ({ x, y }) => ({ width: x, height: y });
 export const xySet = (target, { x, y }) => Object.assign(target, { x, y });
 export const xyIncrement = (target, ...xys) => xySet(target, xyAdd(target, ...xys));
 export const xyMultiply = (target, ...xys) => xySet(target, xyTimes(target, ...xys));
+
+export const xyApply = (fn, ...xys) => ({ x: fn(...xys.map(p => p.x)), y: fn(...xys.map(p => p.y)) });
+
+export const xyCentroid = (...xys) => xyDivide(xyAdd(...xys), xySame(xys.length));
+export const xyDistanceSquared = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);

@@ -11,7 +11,7 @@
 import { ref, onMounted, onUnmounted, provide } from 'vue';
 import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
-  whtoxy, xytowh, xyIncrement,
+  whtoxy, xytowh, xyIncrement, xyCentroid, xyDistanceSquared,
 } from '@utils/coordinates';
 import { mapValues } from '@utils/object';
 import { onlySelf } from '@utils/event';
@@ -61,19 +61,22 @@ onMounted(() => {
   const pointerList = {};
   world.addEventListener('pointerdown', onlySelf((e) => {
     pointerList[e.data.pointerId] = {
-      createdAt: performance.now(),
       lastEvent: e,
       downAt: xyAdd(xyNeg(world), e.data.global),
       isDragging: true,
+      isPinching: false,
     };
 
     const isDraggingList = Object.values(pointerList).map(i => i.isDragging);
     const countTrue = isDraggingList.reduce((count, bool) => count + Number(bool), 0);
-    if (countTrue > 1) {
+    if (countTrue === 2) {
       // if more than one try dragging, no one is dragging
-      Object.assign(pointerList, mapValues(
-        pointerList,
-        v => Object.assign(v, { isDragging: false }),
+      Object.assign(pointerList, mapValues(pointerList,
+        v => Object.assign(v, {
+          isDragging: false,
+          isPinching: true,
+          pair: Object.values(pointerList).filter(p => p !== v)[0],
+        }),
       ));
     }
   }));
@@ -85,21 +88,55 @@ onMounted(() => {
     };
 
     const {
-      downAt,
-      moveAt,
       isDragging,
+      isPinching,
     } = pointerList[e.data.pointerId];
 
     if (isDragging) {
+      const { downAt, moveAt } = pointerList[e.data.pointerId];
       const moveDiff = xyAdd(xyNeg(downAt), moveAt);
       xyIncrement(world, moveDiff);
       return;
     }
+
+    if (isPinching) {
+      const {
+        downAt: d1, moveAt: m1,
+        pair: { downAt: d2, moveAt: m2 },
+      } = pointerList[e.data.pointerId];
+
+      if (!m2) return;
+
+      const originalMidpoint = xyCentroid(d1, d2);
+      const currentMidpoint = xyCentroid(m1, m2);
+      const moveDiff = xyAdd(xyNeg(originalMidpoint), currentMidpoint);
+      xyIncrement(world, moveDiff);
+      world.updateTransform();
+
+      const distanceStart = xyDistanceSquared(d1, d2);
+      const distanceNow = xyDistanceSquared(m1, m2);
+      const direction = distanceNow > distanceStart ? 1 : -1;
+
+      onZoomRequest(direction);
+
+      return;
+    }
   }));
   world.addEventListener('pointerup', onlySelf((e) => {
+    const { isPinching } = pointerList[e.data.pointerId];
+    if (isPinching) {
+      // if one stops pinching, no one is pinching
+      Object.assign(pointerList, mapValues(pointerList,
+        v => Object.assign(v, {
+          isPinching: false,
+        }),
+      ));
+    }
+
     pointerList[e.data.pointerId] = {
       lastEvent: e,
       isDragging: false,
+      isPinching: false,
     };
     setHitAreaToView();
   }));
