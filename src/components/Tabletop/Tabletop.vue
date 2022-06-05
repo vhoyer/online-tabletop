@@ -78,10 +78,11 @@ onMounted(() => {
     }
   }));
   world.addEventListener('pointermove', onlySelf((e) => {
-    Object.assign(pointerList[e.data.pointerId], {
+    pointerList[e.data.pointerId] = {
+      ...pointerList[e.data.pointerId],
       lastEvent: e,
       moveAt: xyAdd(xyNeg(world), e.data.global),
-    });
+    };
 
     const {
       downAt,
