@@ -10,8 +10,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue';
 import {
-  xyCenter, xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, xyMin, xyMax,
-  whtoxy, xytowh,
+  xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
+  whtoxy, xytowh, xyIncrement,
 } from '@utils/coordinates';
 import { mapValues } from '@utils/object';
 import { onlySelf } from '@utils/event';
@@ -92,7 +92,7 @@ onMounted(() => {
 
     if (isDragging) {
       const moveDiff = xyAdd(xyNeg(downAt), moveAt);
-      xySet(world, xyAdd(world, moveDiff));
+      xyIncrement(world, moveDiff);
       return;
     }
   }));
@@ -107,7 +107,7 @@ onMounted(() => {
   const onZoomRequest = window.onZoomRequest = (direction, { x, y } = xyCenter(app.value.screen)) => {
     const maxZoom = xySame(3);
     const minZoom = xySame(0.15);
-    const newScale = xyMultiply(world.scale, xySame(1 + direction * 0.1));
+    const newScale = xyTimes(world.scale, xySame(1 + direction * 0.1));
     const newScaleBottomAndTopCapped = xyMin(maxZoom, xyMax(minZoom, newScale));
 
     xySet(world.scale, newScaleBottomAndTopCapped);
@@ -122,7 +122,7 @@ onMounted(() => {
     const before = getWorldPositionRelativeToMouse();
     world.updateTransform();
     const after = getWorldPositionRelativeToMouse();
-    xySet(world, xyAdd(world, xyMultiply(xyAdd(after, xyNeg(before)), world.scale)));
+    xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
     world.updateTransform(); // this avoid bug when multiple calls are made sequentially
 
     setHitAreaToView();
