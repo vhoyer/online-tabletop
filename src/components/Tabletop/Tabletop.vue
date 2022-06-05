@@ -35,7 +35,7 @@ onMounted(() => {
     backgroundColor: COLOR_TIMBERWOLF,
   });
 
-  const world = new PIXI.Container();
+  const world = worldRef.value = window.world = new PIXI.Container();
   world.interactive = true;
 
   const setHitAreaToView = () => {
@@ -134,8 +134,6 @@ onMounted(() => {
   }));
 
   grid.forEach(g => world.addChild(g));
-  worldRef.value = world;
-  window.world = world;
 
   app.value.stage.addChild(world);
 });
