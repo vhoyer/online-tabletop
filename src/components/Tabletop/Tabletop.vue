@@ -13,6 +13,7 @@ import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyMultiply, xyDivide, xyMin, xyMax,
   whtoxy, xytowh,
 } from '@utils/coordinates';
+import { mapValues } from '@utils/object';
 import { onlySelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
@@ -56,27 +57,50 @@ onMounted(() => {
     }
   };
   setHitAreaToView();
-  let isDragging = false;
-  const moveStart = { x: 0, y: 0 };
-  world.addEventListener('pointerdown', onlySelf((e) => {
-    const screenPoint = xyAdd(xyNeg(world), e.data.global);
 
-    Object.assign(moveStart, screenPoint);
-    isDragging = true;
+  const pointerList = {};
+  world.addEventListener('pointerdown', onlySelf((e) => {
+    pointerList[e.data.pointerId] = {
+      createdAt: performance.now(),
+      lastEvent: e,
+      downAt: xyAdd(xyNeg(world), e.data.global),
+      isDragging: true,
+    };
+
+    const isDraggingList = Object.values(pointerList).map(i => i.isDragging);
+    const countTrue = isDraggingList.reduce((count, bool) => count + Number(bool), 0);
+    if (countTrue > 1) {
+      // if more than one try dragging, no one is dragging
+      Object.assign(pointerList, mapValues(
+        pointerList,
+        v => Object.assign(v, { isDragging: false }),
+      ));
+    }
   }));
   world.addEventListener('pointermove', onlySelf((e) => {
-    if (!isDragging) return;
+    Object.assign(pointerList[e.data.pointerId], {
+      lastEvent: e,
+      moveAt: xyAdd(xyNeg(world), e.data.global),
+    });
 
-    const screenPoint = xyAdd(xyNeg(world), e.data.global);
+    const {
+      downAt,
+      moveAt,
+      isDragging,
+    } = pointerList[e.data.pointerId];
 
-    const moveNow = screenPoint;
-    const moveDiff = xyAdd(xyNeg(moveStart), moveNow);
-
-    xySet(world, xyAdd(world, moveDiff));
+    if (isDragging) {
+      const moveDiff = xyAdd(xyNeg(downAt), moveAt);
+      xySet(world, xyAdd(world, moveDiff));
+      return;
+    }
   }));
-  world.addEventListener('pointerup', onlySelf(() => {
+  world.addEventListener('pointerup', onlySelf((e) => {
+    pointerList[e.data.pointerId] = {
+      lastEvent: e,
+      isDragging: false,
+    };
     setHitAreaToView();
-    isDragging = false;
   }));
 
   const onZoomRequest = window.onZoomRequest = (direction, { x, y } = xyCenter(app.value.screen)) => {
