@@ -11,7 +11,7 @@
 import { ref, onMounted, onUnmounted, provide } from 'vue';
 import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
-  whtoxy, xytowh, xyIncrement, xyCentroid, xyDistanceSquared,
+  whtoxy, xytowh, xyIncrement, xyCentroid, xyDistanceSquared, xyApply,
 } from '@utils/coordinates';
 import { mapValues } from '@utils/object';
 import { onlySelf } from '@utils/event';
@@ -172,35 +172,45 @@ onMounted(() => {
   const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
 
   const gridSize = 100;
+  const gridSizeXY = xySame(gridSize);
   const gridOffset = gridSize / 2;
-  const xEnd = (Math.ceil((app.value.screen.width - gridOffset) / gridSize) + 1) * gridSize;
-  const yEnd = (Math.ceil((app.value.screen.height - gridOffset) / gridSize) + 1) * gridSize;
+  const gridOffsetXY = xySame(gridOffset);
+  const gridEnd = xyTimes(gridSizeXY, xyAdd(xySame(1), xyApply(Math.ceil, xyDivide(xyAdd(xyNeg(gridOffsetXY), whtoxy(app.value.screen)), gridSizeXY))));
 
-  // reposition
-  grid.forEach((g, index) => g.x = (xEnd * (index % gridRowSize)));
-  grid.forEach((g, index) => g.y = (yEnd * Math.floor(index / gridRowSize)));
+  const panelLineCount = xyApply(Math.ceil, xyDivide(gridEnd, gridSizeXY));
 
-  grid.forEach(g => g.lineStyle({
-    width: 1,
-    color: COLOR_DARK_OLIVE_GREEN,
-    alpha: 0.4,
-    native: true,
-  }));
-  for (const x in Array.from({ length: Math.ceil(xEnd / gridSize) })) {
-    grid.forEach(g => g.moveTo(gridSize * (Number(x) + 1) - gridOffset, 0));
-    grid.forEach(g => g.lineTo(gridSize * (Number(x) + 1) - gridOffset, yEnd));
-  }
-  for (const y in Array.from({ length: Math.ceil(yEnd / gridSize) })) {
-    grid.forEach(g => g.moveTo(0, gridSize * (Number(y) + 1) - gridOffset));
-    grid.forEach(g => g.lineTo(xEnd, gridSize * (Number(y) + 1) - gridOffset));
-  }
+  grid.forEach((panel, index) => {
+    const positionIndexOffset = {
+      x: index % gridRowSize,
+      y: Math.floor(index / gridRowSize),
+    };
 
-  grid.forEach((g, index) => app.value.ticker.add(() => {
-    g.x = xEnd * (Math.floor(-world.x / xEnd) + (index % gridRowSize));
-    g.y = yEnd * (Math.floor(-world.y / yEnd) + Math.floor(index / gridRowSize));
-  }));
+    xySet(panel.position, xyTimes(gridEnd, positionIndexOffset));
+    panel.lineStyle({
+      width: 1,
+      color: COLOR_DARK_OLIVE_GREEN,
+      alpha: 0.4,
+      native: true,
+    });
 
-  grid.forEach(g => world.addChild(g));
+    for (const x in Array.from({ length: panelLineCount.x })) {
+      const xPos = gridSize * (Number(x) + 1) - gridOffset;
+      panel.moveTo(xPos, 0);
+      panel.lineTo(xPos, gridEnd.y);
+    }
+    for (const y in Array.from({ length: panelLineCount.y })) {
+      const yPos = gridSize * (Number(y) + 1) - gridOffset;
+      panel.moveTo(0, yPos);
+      panel.lineTo(gridEnd.y, yPos);
+    }
+
+    app.value.ticker.add(() => {
+      xySet(panel.position,
+        xyTimes(gridEnd, xyAdd(xyApply(Math.floor, xyDivide(xyNeg(world.position), gridEnd)), positionIndexOffset)));
+    });
+
+    world.addChild(panel);
+  });
 
   app.value.stage.addChild(world);
 });
