@@ -126,19 +126,21 @@ onMounted(() => {
     }
 
     if (isPinching) {
-      const { downAt: d1, moveAt: m1, startScale, pair } = pointer;
-      const { downAt: d2, moveAt: m2 } = pair;
+      const { downAt: d1, lastAt: l1, moveAt: m1, startScale, pair } = pointer;
+      const { downAt: d2, lastAt: l2, moveAt: m2 } = pair;
 
       if (!m2) return;
 
+      // zoom
       const distanceStart = Math.sqrt(xyDistanceSquared(d1, d2));
       const distanceNow = Math.sqrt(xyDistanceSquared(m1, m2));
       const newScale = window.newScale = (startScale * distanceNow) / distanceStart;
       setZoomScaleCenteredAt(xySame(newScale));
 
-      const originalMidpoint = xyCentroid(d1, d2);
-      const currentMidpoint = xyCentroid(m1, m2);
-      const moveDiff = xyAdd(xyNeg(originalMidpoint), currentMidpoint);
+      // pan
+      const midpointLast = xyCentroid(l1, l2);
+      const midpointNow = xyCentroid(m1, m2);
+      const moveDiff = xyAdd(xyNeg(midpointLast), midpointNow);
       xyIncrement(world, moveDiff);
       world.updateTransform();
 
