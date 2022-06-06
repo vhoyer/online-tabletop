@@ -10,6 +10,7 @@ export const xyAdd = window.xyAdd = (...xys) => xys.reduce(xyAddTwo);
 export const xyMin = window.xyMin = (...xys) => xys.reduce(xyMinTwo);
 export const xyMax = window.xyMax = (...xys) => xys.reduce(xyMaxTwo);
 
+export const xyInvert = window.xyInvert = ({ x, y }) => ({ x: 1 / x, y: 1 / y });
 export const xyNeg = window.xyNeg = ({ x, y }) => ({ x: -x, y: -y });
 export const xySame = window.xySame = v => ({ x: v, y: v });
 export const xyCenter = window.xyCenter = ({ width, height }) => ({ x: (width / 2), y: (height / 2) });
