@@ -66,14 +66,13 @@ onMounted(() => {
 
     // center zoom on mouse position
     // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
-    const getWorldPositionRelativeToCenter = () => {
-      const { getLocalPosition } = PIXI.InteractionData.prototype;
-      const mouseClickAsObject = { global: { x, y } };
-      return getLocalPosition.call(mouseClickAsObject, world);
+    const getWorldPositionFromScreenPosition = () => {
+      // https://github.com/pixijs/pixijs/blob/dev/packages/math/src/Matrix.ts
+      return world.worldTransform.applyInverse({ x, y });
     };
-    const before = getWorldPositionRelativeToCenter();
+    const before = getWorldPositionFromScreenPosition();
     world.updateTransform();
-    const after = getWorldPositionRelativeToCenter();
+    const after = getWorldPositionFromScreenPosition();
     xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
     world.updateTransform(); // this avoid bug when multiple calls are made sequentially
 
