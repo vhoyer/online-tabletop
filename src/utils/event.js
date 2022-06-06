@@ -1,7 +1,11 @@
+export const isSelf = (e) => {
+  return e.currentTarget === e.target;
+};
+
 export const onlySelf = fn => (...args) => {
   const [e] = args;
 
-  if (e.currentTarget !== e.target) return;
+  if (!isSelf(e)) return;
 
   fn(...args);
 };

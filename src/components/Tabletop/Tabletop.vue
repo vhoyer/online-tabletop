@@ -13,7 +13,7 @@ import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
   whtoxy, xytowh, xyIncrement, xyCentroid, xyDistanceSquared, xyApply,
 } from '@utils/coordinates';
-import { onlySelf } from '@utils/event';
+import { isSelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
 import '@pixi/events';
 import * as PIXI from 'pixi.js';
@@ -80,11 +80,11 @@ onMounted(() => {
   };
 
   const pointerList = window.pointerList = {};
-  world.addEventListener('pointerdown', onlySelf((e) => {
+  world.addEventListener('pointerdown', (e) => {
     pointerList[e.data.pointerId] = {
       id: e.data.pointerId,
       downAt: e.data.global.clone(),
-      isDragging: true,
+      isDragging: isSelf(e), // only drag if is a self event
       isPinching: false,
     };
 
@@ -101,12 +101,12 @@ onMounted(() => {
       });
       Object.assign(pointerList[idPair], {
         isDragging: false,
-        isPinching: false,
-        pair: pointerList[idMain],
+        isPinching: true,
+        main: pointerList[idMain],
       });
     }
-  }));
-  world.addEventListener('pointermove', onlySelf((e) => {
+  });
+  world.addEventListener('pointermove', (e) => {
     const pointer = pointerList[e.data.pointerId];
     Object.assign(pointer, {
       lastAt: pointer.moveAt ?? pointer.downAt,
@@ -115,18 +115,21 @@ onMounted(() => {
 
     const {
       isDragging,
-      isPinching,
+      isPinching, pair,
     } = pointer;
 
     if (isDragging) {
+      if (!isSelf(e)) return;
+
       const { lastAt, moveAt } = pointer;
       const moveDiff = xyAdd(xyNeg(lastAt), moveAt);
       xyIncrement(world, moveDiff);
+      setHitAreaToView();
       return;
     }
 
-    if (isPinching) {
-      const { downAt: d1, lastAt: l1, moveAt: m1, startScale, pair } = pointer;
+    if (isPinching && Boolean(pair)) {
+      const { downAt: d1, lastAt: l1, moveAt: m1, startScale } = pointer;
       const { downAt: d2, lastAt: l2, moveAt: m2 } = pair;
 
       if (!m2) return;
@@ -146,12 +149,12 @@ onMounted(() => {
 
       return;
     }
-  }));
-  world.addEventListener('pointerup', onlySelf((e) => {
-    const { isPinching, pair } = pointerList[e.data.pointerId];
-    if (!isPinching && Boolean(pair)) {
+  });
+  world.addEventListener('pointerup', (e) => {
+    const { isPinching, main } = pointerList[e.data.pointerId];
+    if (isPinching && Boolean(main)) {
       // if one stops pinching, no one is pinching
-      Object.assign(pair, {
+      Object.assign(main, {
         isPinching: false,
       });
     }
@@ -160,8 +163,7 @@ onMounted(() => {
       isDragging: false,
       isPinching: false,
     };
-    setHitAreaToView();
-  }));
+  });
 
   world.interactiveMousewheel = true;
   world.addEventListener('mousewheel', (direction, { x, y }) => {

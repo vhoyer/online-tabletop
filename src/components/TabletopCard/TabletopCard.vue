@@ -48,6 +48,7 @@ card.beginFill(0xffffff);
 card.drawRoundedRect(0, 0, width, height);
 card.endFill();
 card.interactiveChildren = false;
+card.interactive = true;
 
 const mainText = new PIXI.Text(props.main, textStyleMain);
 xySet(mainText.pivot, xyCenter(mainText));
