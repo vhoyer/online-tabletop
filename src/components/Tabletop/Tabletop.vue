@@ -189,7 +189,6 @@ onMounted(() => {
       y: Math.floor(index / gridRowSize),
     };
 
-    xySet(panel.position, xyTimes(gridEnd, positionIndexOffset));
     panel.lineStyle({
       width: 1,
       color: COLOR_DARK_OLIVE_GREEN,
@@ -205,7 +204,7 @@ onMounted(() => {
     for (const y in Array.from({ length: panelLineCount.y })) {
       const yPos = gridSize * (Number(y) + 1) - gridOffset;
       panel.moveTo(0, yPos);
-      panel.lineTo(gridEnd.y, yPos);
+      panel.lineTo(gridEnd.x, yPos);
     }
 
     app.value.ticker.add(() => {
