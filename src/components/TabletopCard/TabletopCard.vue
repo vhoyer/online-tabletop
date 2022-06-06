@@ -5,6 +5,7 @@
 import { inject, watch, onUnmounted } from 'vue';
 import { xySame, xySet, xyCenter } from '@utils/coordinates';
 import * as PIXI from 'pixi.js';
+import { movable } from '@utils/displayObjectInteractions.pixi.js';
 
 const props = defineProps({
   color: {
@@ -42,13 +43,15 @@ const textStyleMain = {
   align: 'center',
 };
 
-const card = new PIXI.Graphics();
+const card = window.card = new PIXI.Graphics();
 xySet(card.pivot, center);
 card.beginFill(0xffffff);
 card.drawRoundedRect(0, 0, width, height);
 card.endFill();
 card.interactiveChildren = false;
 card.interactive = true;
+
+movable(card);
 
 const mainText = new PIXI.Text(props.main, textStyleMain);
 xySet(mainText.pivot, xyCenter(mainText));
