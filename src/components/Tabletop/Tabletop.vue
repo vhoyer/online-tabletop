@@ -79,7 +79,7 @@ onMounted(() => {
     setHitAreaToView();
   };
 
-  const pointerList = window.pointerList = {};
+  const pointerList = {};
   world.addEventListener('pointerdown', (e) => {
     pointerList[e.data.pointerId] = {
       id: e.data.pointerId,
@@ -137,7 +137,7 @@ onMounted(() => {
       // zoom
       const distanceStart = Math.sqrt(xyDistanceSquared(d1, d2));
       const distanceNow = Math.sqrt(xyDistanceSquared(m1, m2));
-      const newScale = window.newScale = (startScale * distanceNow) / distanceStart;
+      const newScale = (startScale * distanceNow) / distanceStart;
       setZoomScaleCenteredAt(xySame(newScale));
 
       // pan
