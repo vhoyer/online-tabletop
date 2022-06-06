@@ -57,7 +57,13 @@ onMounted(() => {
   };
   setHitAreaToView();
 
-  const setZoomScaleCenteredAt = window.setZoomScaleCenteredAt = (newScale, { x, y } = xyCenter(app.value.screen)) => {
+  // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
+  const getWorldPositionFromScreenPosition = ({ x, y }) => {
+    // https://github.com/pixijs/pixijs/blob/dev/packages/math/src/Matrix.ts
+    return world.worldTransform.applyInverse({ x, y });
+  };
+
+  const setZoomScaleCenteredAt = window.setZoomScaleCenteredAt = (newScale, zoomCenter = xyCenter(app.value.screen)) => {
     const maxZoom = xySame(3);
     const minZoom = xySame(0.15);
     const newScaleBottomAndTopCapped = xyMin(maxZoom, xyMax(minZoom, newScale));
@@ -65,14 +71,9 @@ onMounted(() => {
     xySet(world.scale, newScaleBottomAndTopCapped);
 
     // center zoom on mouse position
-    // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
-    const getWorldPositionFromScreenPosition = () => {
-      // https://github.com/pixijs/pixijs/blob/dev/packages/math/src/Matrix.ts
-      return world.worldTransform.applyInverse({ x, y });
-    };
-    const before = getWorldPositionFromScreenPosition();
+    const before = getWorldPositionFromScreenPosition(zoomCenter);
     world.updateTransform();
-    const after = getWorldPositionFromScreenPosition();
+    const after = getWorldPositionFromScreenPosition(zoomCenter);
     xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
     world.updateTransform(); // this avoid bug when multiple calls are made sequentially
   };
