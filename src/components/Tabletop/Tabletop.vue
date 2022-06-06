@@ -108,6 +108,8 @@ onMounted(() => {
   });
   world.addEventListener('pointermove', (e) => {
     const pointer = pointerList[e.data.pointerId];
+    if (!pointer) return; // if no pointer exists, it's just hovering
+
     Object.assign(pointer, {
       lastAt: pointer.moveAt ?? pointer.downAt,
       moveAt: e.data.global.clone(),
