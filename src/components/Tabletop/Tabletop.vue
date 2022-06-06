@@ -75,8 +75,6 @@ onMounted(() => {
     const after = getWorldPositionFromScreenPosition();
     xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
     world.updateTransform(); // this avoid bug when multiple calls are made sequentially
-
-    setHitAreaToView();
   };
 
   const pointerList = {};
@@ -126,8 +124,6 @@ onMounted(() => {
       const { lastAt, moveAt } = pointer;
       const moveDiff = xyAdd(xyNeg(lastAt), moveAt);
       xyIncrement(world, moveDiff);
-      setHitAreaToView();
-      return;
     }
 
     if (isPinching && Boolean(pair)) {
@@ -148,9 +144,9 @@ onMounted(() => {
       const moveDiff = xyAdd(xyNeg(midpointLast), midpointNow);
       xyIncrement(world, moveDiff);
       world.updateTransform();
-
-      return;
     }
+
+    setHitAreaToView();
   });
   world.addEventListener('pointerup', (e) => {
     const { isPinching, main } = pointerList[e.data.pointerId];
@@ -170,8 +166,9 @@ onMounted(() => {
   world.interactiveMousewheel = true;
   world.addEventListener('mousewheel', (direction, { x, y }) => {
     const newScale = xyTimes(world.scale, xySame(1 + direction * 0.1));
-
     setZoomScaleCenteredAt(newScale, { x, y });
+
+    setHitAreaToView();
   });
 
   const gridRowSize = 2;
