@@ -83,7 +83,7 @@ onMounted(() => {
   world.addEventListener('pointerdown', onlySelf((e) => {
     pointerList[e.data.pointerId] = {
       id: e.data.pointerId,
-      downAt: xyAdd(xyNeg(world), e.data.global),
+      downAt: e.data.global.clone(),
       isDragging: true,
       isPinching: false,
     };
@@ -107,24 +107,26 @@ onMounted(() => {
     }
   }));
   world.addEventListener('pointermove', onlySelf((e) => {
-    Object.assign(pointerList[e.data.pointerId], {
-      moveAt: xyAdd(xyNeg(world), e.data.global),
+    const pointer = pointerList[e.data.pointerId];
+    Object.assign(pointer, {
+      lastAt: pointer.moveAt ?? pointer.downAt,
+      moveAt: e.data.global.clone(),
     });
 
     const {
       isDragging,
       isPinching,
-    } = pointerList[e.data.pointerId];
+    } = pointer;
 
     if (isDragging) {
-      const { downAt, moveAt } = pointerList[e.data.pointerId];
-      const moveDiff = xyAdd(xyNeg(downAt), moveAt);
+      const { lastAt, moveAt } = pointer;
+      const moveDiff = xyAdd(xyNeg(lastAt), moveAt);
       xyIncrement(world, moveDiff);
       return;
     }
 
     if (isPinching) {
-      const { downAt: d1, moveAt: m1, startScale, pair } = pointerList[e.data.pointerId];
+      const { downAt: d1, moveAt: m1, startScale, pair } = pointer;
       const { downAt: d2, moveAt: m2 } = pair;
 
       if (!m2) return;
