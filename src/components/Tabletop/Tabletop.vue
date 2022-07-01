@@ -85,6 +85,7 @@ onMounted(() => {
     // invert grid scale to keep it the same visual size while changing scale
     xySet(grid.scale, xyInvert(world.scale));
     keepCenterWhileScaleChange(grid);
+    createGridLinesOnScale();
   };
 
   const pointerList = {};
@@ -184,43 +185,58 @@ onMounted(() => {
   const gridRowSize = 2;
   const grid = window.grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics()).reduce((c, p) => (c.addChild(p), c), new PIXI.Container());
 
-  const gridSize = 100;
-  const gridSizeXY = xySame(gridSize);
-  const gridOffset = gridSize / 2;
-  const gridOffsetXY = xySame(gridOffset);
-  const gridEnd = xyTimes(gridSizeXY, xyAdd(xySame(1), xyApply(Math.ceil, xyDivide(xyAdd(xyNeg(gridOffsetXY), whtoxy(app.value.screen)), gridSizeXY))));
+  const gridBaseSize = 100;
+  const gridBaseSizeXY = xySame(gridBaseSize);
+  const gridBaseOffset = gridBaseSize / 2;
+  const gridBaseOffsetXY = xySame(gridBaseOffset);
+  const gridBaseEnd = xyTimes(gridBaseSizeXY, xyAdd(xySame(1), xyApply(Math.ceil, xyDivide(xyAdd(xyNeg(gridBaseOffsetXY), whtoxy(app.value.screen)), gridBaseSizeXY))));
 
-  const panelLineCount = xyApply(Math.ceil, xyDivide(gridEnd, gridSizeXY));
+  const panelBaseLineCount = xyApply(Math.ceil, xyDivide(gridBaseEnd, gridBaseSizeXY));
 
-  grid.children.forEach((panel, index) => {
-    const positionIndexOffset = {
-      x: index % gridRowSize,
-      y: Math.floor(index / gridRowSize),
-    };
+  const createGridLinesOnScale = () => {
+    const gridSize = 100 / grid.scale.x;
+    const gridOffset = gridSize / 2;
 
-    panel.lineStyle({
-      width: 1,
-      color: COLOR_DARK_OLIVE_GREEN,
-      alpha: 0.4,
-      native: true,
+    const gridSizeXY = xySame(gridSize);
+    const gridOffsetXY = xySame(gridOffset);
+    const gridEnd = xyTimes(gridSizeXY, xyAdd(xySame(1), xyApply(Math.ceil, xyDivide(xyAdd(xyNeg(gridOffsetXY), whtoxy(app.value.screen)), gridSizeXY))));
+
+    const panelLineCount = xyTimes(panelBaseLineCount, grid.scale);
+
+    grid.children.forEach((panel, index) => {
+      panel.clear();
+
+      const positionIndexOffset = {
+        x: index % gridRowSize,
+        y: Math.floor(index / gridRowSize),
+      };
+
+      panel.lineStyle({
+        width: 1,
+        color: COLOR_DARK_OLIVE_GREEN,
+        alpha: 0.4,
+        native: true,
+      });
+
+      for (const x in Array.from({ length: panelLineCount.x })) {
+        const xPos = gridSize * (Number(x) + 1) - gridOffset;
+        panel.moveTo(xPos, 0);
+        panel.lineTo(xPos, gridEnd.y);
+      }
+      for (const y in Array.from({ length: panelLineCount.y })) {
+        const yPos = gridSize * (Number(y) + 1) - gridOffset;
+        panel.moveTo(0, yPos);
+        panel.lineTo(gridEnd.x, yPos);
+      }
+
+      app.value.ticker.add(() => {
+        xySet(panel.position,
+          xyTimes(gridEnd, xyAdd(xyApply(Math.floor, xyDivide(xyNeg(world.position), gridEnd)), positionIndexOffset)));
+      });
     });
+  };
 
-    for (const x in Array.from({ length: panelLineCount.x })) {
-      const xPos = gridSize * (Number(x) + 1) - gridOffset;
-      panel.moveTo(xPos, 0);
-      panel.lineTo(xPos, gridEnd.y);
-    }
-    for (const y in Array.from({ length: panelLineCount.y })) {
-      const yPos = gridSize * (Number(y) + 1) - gridOffset;
-      panel.moveTo(0, yPos);
-      panel.lineTo(gridEnd.x, yPos);
-    }
-
-    app.value.ticker.add(() => {
-      xySet(panel.position,
-        xyTimes(gridEnd, xyAdd(xyApply(Math.floor, xyDivide(xyNeg(world.position), gridEnd)), positionIndexOffset)));
-    });
-  });
+  createGridLinesOnScale();
 
   world.addChild(grid);
   app.value.stage.addChild(world);
