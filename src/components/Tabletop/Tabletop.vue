@@ -58,24 +58,28 @@ onMounted(() => {
   setHitAreaToView();
 
   // courtesy from https://github.com/anvaka/ngraph/blob/master/examples/pixi.js/03%20-%20Zoom%20And%20Pan/globalInput.js
-  const getVirtualPositionFromScreenPosition = ({ x, y }, { relativeTo = world }) => {
+  const getVirtualPositionFromScreenPosition = ({ x, y }, { relativeTo = world } = {}) => {
     // https://github.com/pixijs/pixijs/blob/dev/packages/math/src/Matrix.ts
     return relativeTo.worldTransform.applyInverse({ x, y });
   };
 
-  const setZoomScaleCenteredAt = window.setZoomScaleCenteredAt = (newScale, zoomCenter = xyCenter(app.value.screen)) => {
+  const setZoomScaleCenteredAt = window.setZoomScaleCenteredAt = (newScaleRaw, zoomCenter = xyCenter(app.value.screen)) => {
+    const newScale = typeof newScaleRaw === 'number' ? xySame(newScaleRaw) : newScaleRaw;
     const maxZoom = xySame(3);
     const minZoom = xySame(0.15);
     const newScaleBottomAndTopCapped = xyMin(maxZoom, xyMax(minZoom, newScale));
 
-    xySet(world.scale, newScaleBottomAndTopCapped);
+    const keepCenterWhileScaleChange = (displayObject) => {
+      const before = getVirtualPositionFromScreenPosition(zoomCenter, { relativeTo: displayObject });
+      displayObject.updateTransform();
+      const after = getVirtualPositionFromScreenPosition(zoomCenter, { relativeTo: displayObject });
 
-    // center zoom on mouse position
-    const before = getVirtualPositionFromScreenPosition(zoomCenter);
-    world.updateTransform();
-    const after = getVirtualPositionFromScreenPosition(zoomCenter);
-    xyIncrement(world, xyTimes(xyAdd(after, xyNeg(before)), world.scale));
-    world.updateTransform(); // this avoid bug when multiple calls are made sequentially
+      xyIncrement(displayObject.position, xyTimes(xyAdd(after, xyNeg(before)), displayObject.scale));
+      displayObject.updateTransform(); // this avoid bug when multiple calls are made sequentially
+    };
+
+    xySet(world.scale, newScaleBottomAndTopCapped);
+    keepCenterWhileScaleChange(world);
   };
 
   const pointerList = {};
