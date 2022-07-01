@@ -12,6 +12,7 @@ import { ref, onMounted, onUnmounted, provide } from 'vue';
 import {
   xyCenter, xyAdd, xyNeg, xySame, xySet, xyTimes, xyDivide, xyMin, xyMax,
   whtoxy, xytowh, xyIncrement, xyCentroid, xyDistanceSquared, xyApply,
+  xyInvert,
 } from '@utils/coordinates';
 import { isSelf } from '@utils/event';
 import '@_PIXI_plugins/mousewheel';
@@ -80,6 +81,10 @@ onMounted(() => {
 
     xySet(world.scale, newScaleBottomAndTopCapped);
     keepCenterWhileScaleChange(world);
+
+    // invert grid scale to keep it the same visual size while changing scale
+    xySet(grid.scale, xyInvert(world.scale));
+    keepCenterWhileScaleChange(grid);
   };
 
   const pointerList = {};
@@ -177,7 +182,7 @@ onMounted(() => {
   });
 
   const gridRowSize = 2;
-  const grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics());
+  const grid = window.grid = Array.from({ length: gridRowSize ** 2 }).fill().map(() => new PIXI.Graphics()).reduce((c, p) => (c.addChild(p), c), new PIXI.Container());
 
   const gridSize = 100;
   const gridSizeXY = xySame(gridSize);
@@ -187,7 +192,7 @@ onMounted(() => {
 
   const panelLineCount = xyApply(Math.ceil, xyDivide(gridEnd, gridSizeXY));
 
-  grid.forEach((panel, index) => {
+  grid.children.forEach((panel, index) => {
     const positionIndexOffset = {
       x: index % gridRowSize,
       y: Math.floor(index / gridRowSize),
@@ -215,10 +220,9 @@ onMounted(() => {
       xySet(panel.position,
         xyTimes(gridEnd, xyAdd(xyApply(Math.floor, xyDivide(xyNeg(world.position), gridEnd)), positionIndexOffset)));
     });
-
-    world.addChild(panel);
   });
 
+  world.addChild(grid);
   app.value.stage.addChild(world);
 });
 onUnmounted(() => {
